@@ -1,0 +1,61 @@
+<template name="hubLogsLayout">
+    <div id="wrapper">
+        {{> header}}
+        {{> slogans}}
+        <form action="" method="get">
+            {{> environments}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="button-container">
+                            <input type="button" value="Clear Filter" class="btn-primary">
+                            <input type="button" value="Search" class="btn-primary">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{> hublogsFilterPanel}}
+
+        </form>
+        {{> yield}}
+    </div>
+    <div class="push"></div>
+    {{> footer}}
+</template>
+
+<template name="hubLogs">
+
+    {{> pagesNav}}
+
+        <table class="hublogsSearchResultsContainer">
+            <thead>
+            <tr>
+                <th>RID</th>
+                <th>MESSAGE_ID</th>
+                <th>RSID</th>
+                <th>TIME</th>
+                <th>BRAND</th>
+                <th>APP</th>
+                <th>APP_NAME</th>
+                <th>REGION</th>
+                <th>USER_ID</th>
+                <th>REQ_MESS</th>
+                <th>SVC_ID</th>
+                <th>SVC_NAME</th>
+                <th>SEV</th>
+                <th>LOG_CDE</th>
+                <th>LOG_TEXT</th>
+                <th>SRC_NAME</th>
+                <th>PROVIDER</th>
+                <th>LOG_MESS</th>
+                <th>TH_REQ_CONTENT</th>
+            </tr>
+            </thead>
+            {{> pages}}
+        </table>
+
+    <div class="bottom-paginator-container">
+        {{> pagesNav}}
+    </div>
+</template>
+

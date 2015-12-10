@@ -10,10 +10,6 @@ Meteor.publish('environments', function() {
     return Environments.find();
 })
 
-//Meteor.publish('hubLogs', function(){
-//   return HubLogs.find();
-//});
-
 Meteor.publish('hublogs', function(){
     return HubLogs.find();
 });

@@ -1,0 +1,306 @@
+@import "custom.bootstrap.import.less";
+
+
+@link-color: #434567;
+@link-hover-color: #275828;
+@link-decoration: underline;
+
+@background-color: #911d00;
+@green-brown: #AC9B5B; //Used for borders and Buttons
+@tan-text-color: #f9ecba;
+
+
+/* Mixins */
+
+.box-shadow(@h-shadow, @v-shadow, @blur, @spread, @color) {
+  -moz-box-shadow: @h-shadow @v-shadow @blur @spread @color;
+  -webkit-box-shadow: @h-shadow @v-shadow @blur @spread @color;
+  -o-box-shadow: @h-shadow @v-shadow @blur @spread @color;
+  box-shadow: @h-shadow @v-shadow @blur @spread @color;
+}
+
+.border-radius(@radius) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  -ms-border-radius: @radius;
+  border-radius: @radius;
+}
+
+/* End Mixins */
+
+html , body {
+  height: 100%;
+  width: 100%;
+  //background: #fff;
+  background-color: @background-color;
+}
+
+/* Wrapper for page content to push down footer */
+#wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+  height: 60px;
+}
+#footer {
+  background-color: #2B2724;
+  color: #9a906c;
+  margin-top: 4.2em;
+  .footer-text-container {
+    margin-top: 1.95rem;
+  }
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+.header-container {
+  margin-top: 2em;
+  .title{
+    letter-spacing: 2px;
+    font-size: 5.725rem;
+    color: @tan-text-color;
+  }
+}
+
+.miniTitleContainer {
+  margin-top: 1rem;
+  margin-bottom: 1.2rem;
+  .miniTitle {
+    color: @tan-text-color;
+    font-size: 3.875rem;
+    text-transform: uppercase;
+  }
+}
+
+.filter-container {
+  margin-top: 1em;
+  margin-bottom: 1.8em;
+}
+
+p {
+  font-family: 'Open Sans', tahoma, verdana, Arial;
+  font-weight: normal;
+  font-size: 0.82em;
+  line-height: 1.65em;
+  margin-bottom: 0;
+}
+h1 {
+  font-family: Oswald, 'Fjalla One', tahoma;
+  font-size: 1.8em;
+  margin-bottom: .5em;
+  font-weight: normal;
+  margin-top: 0;
+  line-height: 1.2em;
+  color: #f9ecba;
+  display: block;
+}
+h2 {
+  font-family: Oswald, 'Fjalla One', tahoma;
+}
+
+.noPaddings{
+  padding-left:  0 !important;
+  padding-right: 0 !important;
+}
+
+.interactionModal {
+  margin-top: @navbar-height;
+  z-index: 2000;
+}
+
+.interactionBody {
+
+}
+
+.full-height {
+  display: table-cell;
+  vertical-align: middle;
+}
+.loading-wrapper {
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  display: block;
+  position: relative;
+
+}
+
+.btn-interaction-rounded {
+  width: 35px;
+  height: 70px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-bottom-left-radius: 50%;
+  border-top-left-radius: 50%;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+  margin-left: -50px;
+  margin-top: 50%;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+}
+
+.btn-circle {
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-radius: 50%;
+}
+.btn-circle.btn-lg {
+  width: 50px;
+  height: 50px;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.33;
+}
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  font-size: 24px;
+  line-height: 1.33;
+}
+
+.medium-size-title {
+  color: @tan-text-color;
+  font-size: @font-size-h3;
+  line-height: @line-height-base;
+  margin-bottom: 1rem;
+}
+
+table {
+  thead{
+    tr {
+      th {
+        background: #F5F5F5;
+        color: #222222;
+        font-size: 1.25rem;
+        font-weight: bold;
+        padding: 0.44444rem 0.55556rem 0.55556rem;
+      }
+    }
+  }
+  td {padding: 0.44444rem 0.55556rem 0.55556rem;}
+  background: #FFFFFF;
+  border: solid 1px #DDDDDD;
+  table-layout: auto;
+  margin-bottom: 1.11111rem;
+  border-spacing: 2px;
+  display: table;
+  border-collapse: separate;
+  tr:nth-child(even){
+    background: #FEFEFE;
+  }
+  tr:nth-child(odd){
+    background: #F9F9F9;
+  }
+
+}
+
+.button-container{
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+
+.btn-primary{
+  .box-shadow(0px, 1px, 0px, 0px, #ffffff);
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #D6C6BA), color-stop(1, @green-brown));
+  background:-moz-linear-gradient(top, #D6C6BA 5%, @green-brown 100%);
+  background:-webkit-linear-gradient(top, #D6C6BA 5%, @green-brown 100%);
+  background:-o-linear-gradient(top, #D6C6BA 5%, @green-brown 100%);
+  background:-ms-linear-gradient(top, #D6C6BA 5%, @green-brown 100%);
+  background:linear-gradient(to bottom, #D6C6BA 5%, @green-brown 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#D6C6BA', endColorstr='#dfdfdf',GradientType=0);
+  background-color:#817853;
+  .border-radius(4px);
+  border:1px solid #333;
+  display:inline-block;
+  cursor:pointer;
+  color:#222;
+  font-family:Arial;
+  font-size:15px;
+  font-weight:bold;
+  padding:6px 24px;
+  text-decoration:none;
+  border-color: #D6C6BA;
+}
+
+.hublogsSearchResultsContainer {
+  border: 8px solid #AC9B5B;
+  .box-shadow(0 -4px 20px #222222);
+}
+
+input:not([type]),
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="color"],
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 0;
+  background-color: #FFFFFF;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #cccccc;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #444444;
+  display: block;
+  font-family: inherit;
+  font-size: 1.35rem;
+  height: 2.8556rem;
+  margin: 0 0 1.1rem 0;
+  padding: 0.4444rem;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: border-color 0.15s linear, background 0.15s linear;
+  -moz-transition: border-color 0.15s linear, background 0.15s linear;
+  -ms-transition: border-color 0.15s linear, background 0.15s linear;
+  -o-transition: border-color 0.15s linear, background 0.15s linear;
+  transition: border-color 0.15s linear, background 0.15s linear;
+}
+
+label {
+  color: #4d4d4d;
+  cursor: pointer;
+  display: block;
+  font-size: 1.35rem;
+  font-weight: normal;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
