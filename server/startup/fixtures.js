@@ -111,7 +111,7 @@ if(Environments.find().count() === 0)
 {
     //Environments.loadFromAPI();
     //var env = EmaGatewayAPI.getEnvironments();
-    //this.unblock();
+    //
     var env = Meteor.http.call("GET", "http://localhost:10010/ema/env", function(err, result){
         if(err)
         {
@@ -160,13 +160,15 @@ if(HubLogs.find().count() === 0)
     HubLogs._ensureIndex({
         LOG_ID: 1
     });
-    Meteor.http.get("http://localhost:10010/ema/hublogs", {params: {env: "huba1", start: 0, size: 200}}, function(err, results){
+    request = {env: "huba1", requestId: 74665};
+    Meteor.http.get("http://localhost:10010/ema/hublog", function(err, results){
         if(err)
         {
             console.log("Error getting hublogs: " + err);
         }
         else
         {
+            console.log(results.data);
             _.each(results.data, function(r){
                 HubLogs.insert(r);
             });

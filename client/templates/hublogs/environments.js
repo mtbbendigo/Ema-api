@@ -11,3 +11,11 @@ Template.environments.helpers({
         return Environments.find();
     }
 });
+
+Template.environments.events({
+   "change #hubEnvironments": function(event, template)
+   {
+       Session.set("selectedHubEnv", template.$("#hubEnvironments").val());
+       //var selectedValue = Session.get("selectedHubEnv");
+   }
+});

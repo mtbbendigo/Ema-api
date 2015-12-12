@@ -14,9 +14,14 @@ Meteor.methods({
         });
     },
 
-    getHubLogs: function() {
-        console.log("Get hublogs called by client.");
-        Meteor.http.call("GET", baseUrl + "hublogs", {params: {env: "huba1", start: 0, size: 200}}, function(err, result){
+    getHubLogs: function(parameters) {
+        console.log("Get hublogs called.");
+        var request = baseHubLogsParams;
+        if(!parameters)
+        {
+           parameters = {requestId: 746655};
+        }
+        Meteor.http.call("GET", baseUrl + "hublogs", {params: parameters}, function(err, result){
             if(err)
             {
                 console.log(err);
