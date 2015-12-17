@@ -1,2 +1,2 @@
-#Pagination
-A Meteor project that uses pagination and other Kool stuff
+# Ema
+Environment Management Application
