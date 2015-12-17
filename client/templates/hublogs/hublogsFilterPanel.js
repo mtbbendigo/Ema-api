@@ -33,3 +33,8 @@ Template.hublogsFilterPanel.helpers({
         return rows;
     }
 });
+
+Template.hublogsFilterPanel.events()
+{
+    //"cli"
+}
