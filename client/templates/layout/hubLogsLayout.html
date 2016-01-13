@@ -6,16 +6,26 @@
             {{> environments}}
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-12">                        <div class="button-container">
-                            <input type="reset" value="Clear Filter" class="btn-primary" id="clearFilter">
-                            <input type="submit" value="Search" class="btn-primary" id="btnSearch">
+                    <div class="col-lg-12">
+                        <div class="button-container">
+                            <ul class="list-inline">
+                                <li><input type="reset" value="Clear Filter" class="btn-primary" id="clearFilter"></li>
+                                <li><input type="submit" value="Search" class="btn-primary" id="btnSearch"></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
             {{> hublogsFilterPanel}}
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6"><a href="" class="prev">{{prev}}</a></div>
+                        <div class="col-lg-6"><a href="" class="next">{{next}}</a></div>
+                    </div>
+                </div>
 
         </div>
+        <div class="hublogsTableContainer">
         <table class="hublogsSearchResultsContainer">
             <thead>
             <tr>
@@ -43,30 +53,59 @@
             <tbody>
             {{#each hubLogs}}
                 <tr>
-                    <!--<td><input type="hidden" text="{{LOG_ID}}"><a href="/ema/hublog/requestId/{{REQUEST_ID}}" class="req">{{REQUEST_ID}}</a></td>-->
+                    <!--<td><input type="hidden" text="{{RowNum}}"><a href="/ema/hublog/requestId/{{REQUEST_ID}}" class="req">{{REQUEST_ID}}</a></td>-->
                     <td><a href="" class="req">{{REQUEST_ID}}</a></td>
-                    <td><a href="" class="messId">{{MESSAGE_ID}}</a></td>
-                    <td>{{REQ_SERVICE_ID}}</td>
-                    <td>{{DATE_OF_LOG}}</td>
-                    <td>{{BRAND}}</td>
-                    <td>{{APP_CODE}}</td>
-                    <td>{{APP_NAME}}</td>
-                    <td>{{REGION}}</td>
-                    <td>{{USER_ID}}</td>
-                    <td>{{REQ_MESSAGE}}</td>
-                    <td>{{SERVICE_ID}}</td>
-                    <td>{{SERVICE_NAME}}</td>
-                    <td>{{SEVERITY}}</td>
-                    <td>{{LOG_CODE}}</td>
-                    <td>{{LOG_TEXT}}</td>
-                    <td>{{SOURCE_NAME}}</td>
+                    <td>{{MESSAGE_ID}}</td>
+                    <td>{{REQUEST_SERVICE_ID}}</td>
+                    <td>{{REQUEST_DTE}}</td>
+                    <td>{{BRAND_NME}}</td>
+                    <td><a href="" class="appCode">{{APPLICATION_CDE}}</a></td>
+                    <td>{{APPLICATION_NME}}</td>
+                    <td>{{INSTANCE_NME}}</td>
+                    <td>{{USERID}}</td>
+                    <td><div class="panel-group" id="accordion{{RowNum}}">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion{{RowNum}}" href="#collapse{{RowNum}}">Request Message</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse{{RowNum}}" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>{{MESSAGE_TXT}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><a href="" class="srvcId">{{SERVICE_ID}}</a></td>
+                    <td>{{SERVICE_NME}}</td>
+                    <td>{{SEVERITY_CDE}}</td>
+                    <td>{{LOG_CDE}}</td>
+                    <td>{{LOG_TXT}}</td>
+                    <td><a href="" class="srcName">{{SOURCE_NAME}}</a></td>
                     <td>{{PROVIDER}}</td>
-                    <td>{{LOG_MESSAGE}}</td>
+                    <td><div class="panel-group" id="log_mess_accord{{RowNum}}">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#log_mess_accord{{RowNum}}" href="#collapse_log{{RowNum}}">Request Message</a>
+                                </h4>
+                            </div>
+                            <div id="collapse_log{{RowNum}}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <p>{{MESSAGE_TEXT}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </td>
                     <td>{{THUNDERHEAD_CONTENT}}</td>
                 </tr>
             {{/each}}
             </tbody>
         </table>
+        </div>
     </div>
     <div class="push"></div>
     {{> footer}}

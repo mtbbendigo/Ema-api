@@ -2,8 +2,16 @@
  * Created by holly on 12/11/2015.
  */
 
+var defaultURI = "http://localhost:10010/ema/";
+let defaultEnv = {env: 'huba1'};
+
 Template.hublogsFilterPanel.onCreated(function(){
-   Meteor.subscribe('applications');
+    loadApplications(defaultEnv);
+    //Mteteor.autorun is a re-active context meaning everything inside will get re-run if a reactive data source changes inside
+    //Meteor.autorun(function() {
+    //    Meteor.subscribe("messages", Session.get("current_channel"));
+    //});
+
 });
 
 Template.hublogsFilterPanel.helpers({
@@ -36,5 +44,19 @@ Template.hublogsFilterPanel.helpers({
 
 Template.hublogsFilterPanel.events()
 {
-    //"cli"
+
+}
+
+function loadApplications(params) {
+    console.log(params);
+    Meteor.call('getApplications', params, function(err, result){
+        if(err) {
+            throw(err);
+        }
+        else {
+            _.each(result.data, function(r){
+                Applications.insert(r);
+            });
+        }
+    });
 }
