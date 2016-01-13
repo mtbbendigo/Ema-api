@@ -1,0 +1,236 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Environment Management Application
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths
+basePath: /ema
+#
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+x-a127-config: {}
+x-a127-services: {}
+paths:
+  "/hublog":
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hublogs
+    x-a127-apply: {}
+    get:
+      description: Returns Hublogs to the caller
+      # used as the method name of the controller
+      operationId: getHublogs
+      parameters:
+        - name: env
+          in: query
+          description: The hublogs environment i.e. Dev, SVT, UAT
+          required: false
+          type: string
+        - name: start
+          in: query
+          description: The start position of the first row to search from
+          required: false
+          type: integer
+        - name: noRecords
+          in: query
+          description: The number of rows to bring back
+          required: false
+          type: integer
+        - name: requestId
+          in: query
+          description: The requestId
+          required: false
+          type: string
+        - name: serviceId
+          in: query
+          description: The serviceId
+          required: false
+          type: string
+        - name: severity
+          in: query
+          description: Error severity i.e. E, I
+          required: false
+          type: string
+        - name: sourceName
+          in: query
+          description: Source Name
+          required: false
+          type: string
+        - name: code
+          in: query
+          description: Code
+          required: false
+          type: string
+        - name: userId
+          in: query
+          description: User
+          required: false
+          type: string
+        - name: latestDate
+          in: query
+          description: Date and Time as per format YYYY-MM-DD T hh:mi:ss
+          required: false
+          type: string
+          #format: date-time
+        - name: requestMessage
+          in: query
+          description: Contents of Request Message
+          required: false
+          type: string
+        - name: logMessage
+          in: query
+          description: Contents of log message
+          required: false
+          type: string
+        - name: errorsOnly
+          in: query
+          description: Search on logs with a status of E
+          required: false
+          type: string
+        - name: includeOlbPing
+          in: query
+          description: Include OLB Ping
+          required: false
+          type: string
+        - name: apps
+          in: query
+          description: Search on Multiple Applications as a comma separated string
+          required: false
+          type: string
+         #filter=Filter
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HubLogResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/env":
+    x-swagger-router-controller: hublogs
+    x-a127-apply: {}
+    get:
+      description: Return a list of Hub Environments
+      # used as the method name of the controller
+      operationId: getEnvironments
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/GetEnvironmentsResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/apps":
+    x-swagger-router-controller: hublogs
+    x-a127-apply: {}
+    get:
+      description: Returns a list of Applications used by the HUB
+      # used as the method name of the controller
+      operationId: getApplications
+      parameters:
+        - name: env
+          in: query
+          description: The hublogs environment i.e. Dev, SVT, UAT
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            #a pointer to a definition
+            $ref: "#/definitions/GetHubApplicationsResponse"
+# complex objects have schema definitions
+definitions:
+  HubLogResponse:
+    type: array
+    items:
+      $ref: "#/definitions/HubLog"
+  HubLog:
+    type: object
+    properties:
+      requestId:
+        type: integer
+      messageId:
+        type: string
+      requestServiceId:
+        type: integer
+      dateOfLog:
+        type: string
+        #format: date-time
+      brand:
+        type: string
+      applicationCode:
+        type: string
+      applicationName:
+        type: string
+      region:
+        type: string
+      userId:
+        type: string
+      requestMessage:
+        type: string
+      serviceId:
+        type: string
+      serviceName:
+        type: string
+      severity:
+        type: string
+      logCode:
+        type: integer
+      logText:
+        type: string
+      sourceName:
+        type: string
+      provider:
+        type: string #dbo.APPLICATION.APPLICATION_NME
+      logMessage:
+        type: string #dbo.MESSAGE.MESSAGE_TXT
+      thunderheadRequestContent:
+        type: string
+  GetEnvironmentsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/Environment"
+  Environment:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+  GetHubApplicationsResponse:
+    type: array
+    items:
+      $ref: "#/definitions/Application"
+  Application:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
