@@ -4,4 +4,4 @@ settings.json
 #Sensitive data
 server/config/security.js
 server/config/policy.js
-server/config/settings.json
+server/*.json
