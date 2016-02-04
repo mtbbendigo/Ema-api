@@ -2,7 +2,7 @@
  * Created by holly on 10/01/2016.
  */
 //Future = Npm.require('fibers/future');
-var defaultURI = "http://localhost:10010/ema/";
+var baseURI = Meteor.settings.baseUrl;
 var defaultEnv = {env: 'huba1'};
 
 Meteor.methods({
@@ -14,22 +14,22 @@ Meteor.methods({
 
         this.unblock();
         var options = {params};
-        return Meteor.http.get(defaultURI + "hublog?", options);
+        return Meteor.http.get(baseURI + "hublog?", options);
     },
 
     getApplications: function(params) {
         if(params === null || params === undefined){
             params = defaultEnv;
         }
-        console.log(JSON.stringify(params));
+
         this.unblock();
-        return Meteor.http.get(defaultURI + "apps", params);
+        return Meteor.http.get(baseURI + "apps", params);
     },
 
     getEnvironments: function(params) {
         Environments.remove({});
         this.unblock();
-        Meteor.http.get(defaultURI + "env", function(err, result){
+        Meteor.http.get(baseURI + "env", function(err, result){
             if(err)
             {
                 throw(err);

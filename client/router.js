@@ -11,14 +11,39 @@ FlowRouter.route('/', {
     }
 });
 
-
-//FlowRouter.route('/', {
-//    name: 'slogans',
-//    action: function(params) {
+///ema/hublog?env=huba1
+//FlowRouter.route('/ema/hublog/:env', {
+//    name: 'searchHubLogs',
+//    params: {env: "huba1"},
+//    queryParams: {start: 0, size:200},
+//    action: function(params, queryParams) {
 //        BlazeLayout.render("hubLogsLayout", {content: "hublogRow"});
 //    }
 //});
 
+//var hubLogs = FlowRouter.group({
+//    prefix: '/ema'
+//});
+//
+//hubLogs.route('/', {
+//    action: function() {
+//        console.log('We are viewing hublogs page');
+//    }
+//});
+//
+//hubLogs.route('/hublogs', {
+//    action: function(params, queryParams) {
+//        console.log('abcd' + params);
+//        console.log(queryParams);
+//        BlazeLayout.render("hubLogsLayout");
+//    }
+//});
+
+//FlowRouter.route('/ema/hublog', {
+//    action: function() {
+//        console.log("Were on the hublog page");
+//    }
+//});
 
 
 

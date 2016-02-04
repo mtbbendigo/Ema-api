@@ -3,7 +3,7 @@
  */
 
 var defaultParams = {params: {env: 'huba1'}};
-var defaultURI = "http://localhost:10010/ema/";
+var baseUrl = Meteor.settings.baseUrl;
 
 Meteor.startup(function() {
     //Applications.remove({});
@@ -13,7 +13,7 @@ Meteor.startup(function() {
 
     //if(Applications.find().count() === 0) {
     //    Applications._ensureIndex({ID: 1});
-    //    Meteor.http.get(defaultURI + "apps", defaultParams, function(err, result){
+    //    Meteor.http.get(baseUrl + "apps", defaultParams, function(err, result){
     //        if(err) {
     //            throw(err);
     //        }
@@ -27,7 +27,7 @@ Meteor.startup(function() {
 
     if(Environments.find().count() === 0) {
         Environments._ensureIndex({ID: 1});
-        Meteor.http.get(defaultURI + "env", function(err, result){
+        Meteor.http.get(baseUrl + "env", function(err, result){
             if(err) {
                 console.log(err);
             }
@@ -62,7 +62,7 @@ Meteor.startup(function() {
 
     //if(HubLogs.find().count() === 0) {
     //
-    //    Meteor.http.get(defaultURI + "hublog", defaultParams, function(err, res){
+    //    Meteor.http.get(baseUrl + "hublog", defaultParams, function(err, res){
     //       if(err){
     //           throw(err);
     //       }

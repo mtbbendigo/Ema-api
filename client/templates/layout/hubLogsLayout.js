@@ -9,6 +9,7 @@ const defaultNoRecords = 200;
 Session.setDefault('PAGE_CURSOR', defaultStart);
 Session.setDefault('PAGE_SIZE', defaultPageSize);
 
+
 Template.hubLogsLayout.onCreated(function(){
     //this.subscribe('hublogs');
     this.selectedReqId = new ReactiveVar(null);
@@ -21,8 +22,11 @@ Template.hubLogsLayout.onCreated(function(){
     this.code = new ReactiveVar(null);
     this.serviceId = new ReactiveVar(null);
     this.sourceName = new ReactiveVar(null);
-    let options = {env: 'huba1'};
-    loadHubLogs(options);
+    this.serviceName = new ReactiveVar(null);
+    searchCriteria.set("env", "huba1");
+    let search = {};
+    searchCriteria.forEach((val, key) => search[key] = val);
+    loadHubLogs(search);
 });
 
 Template.hubLogsLayout.helpers({
@@ -37,6 +41,7 @@ Template.hubLogsLayout.helpers({
         let code = Template.instance().code.get();
         let serviceId = Template.instance().serviceId.get();
         let sourceName = Template.instance().sourceName.get();
+        let serviceName = Template.instance().serviceName.get();
         if(selectedReq) {
             return HubLogs.find({REQUEST_ID: selectedReq});
         }
@@ -51,6 +56,9 @@ Template.hubLogsLayout.helpers({
         }
         else if(sourceName){
             return HubLogs.find({SOURCE_NAME: sourceName});
+        }
+        else if(serviceName){
+            return HubLogs.find({SERVICE_NAME: serviceName});
         }
         if(nextPage) {
             return HubLogs.find({}, {skip: Number(Session.get('PAGE_CURSOR')), limit: Number(Session.get('PAGE_SIZE'))});
@@ -96,6 +104,16 @@ Template.hubLogsLayout.events({
     //    FlowRouter.setParams({messageId: this.MESSAGE_ID});
     //},
 
+    "change #hubEnvironments": function(event, template) {
+        var region = $('#hubEnvironments').val();
+        //console.log(region);
+        searchCriteria.set("env", region);
+        let search = {};
+        searchCriteria.forEach((val, key) => search[key] = val);
+        loadHubLogs(search);
+
+    },
+
     "click .appCode": function(event, template){
         Template.instance().code.set(this.APPLICATION_CDE);
         FlowRouter.setParams({code: this.APPLICATION_CDE});
@@ -111,6 +129,12 @@ Template.hubLogsLayout.events({
     "click .srcName": function(event, template){
         Template.instance().sourceName.set(this.SOURCE_NAME);
         FlowRouter.setParams({sourceName: this.SOURCE_NAME});
+        resetSessionDefaults();
+    },
+
+    "click .srcName": function(event, template){
+        Template.instance().serviceName.set(this.SOURCE_NME);
+        FlowRouter.setParam({serviceName: this.SOURCE_NAME});
         resetSessionDefaults();
     },
 
@@ -166,7 +190,6 @@ Template.hubLogsLayout.events({
             if(apps != '')
             {
                 searchCriteria.set("apps", apps);
-                console.log(apps);
             }
         }
 
@@ -175,7 +198,6 @@ Template.hubLogsLayout.events({
             if(txtFld.value)
             {
                 searchCriteria.set(txtFld.name, txtFld.value);
-                console.log(txtFld.name);
             }
         });
         let search = {};
@@ -247,4 +269,5 @@ function loadHubLogs(options) {
         }
     });
 }
+
 

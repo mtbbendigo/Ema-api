@@ -1,0 +1,8 @@
+{
+    "name": "Environmnet Management Application",
+    "version": "1.0.1",
+    "scripts": {
+        "meteor:dev": "meteor --settings settings-development.json",
+        "meteor:prod": "meteor --settings settings-production.json"
+    }
+}

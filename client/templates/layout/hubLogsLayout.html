@@ -26,7 +26,7 @@
 
         </div>
         <div class="hublogsTableContainer">
-        <table class="hublogsSearchResultsContainer">
+        <table class="hublogsSearchResultsContainer" width="100%">
             <thead>
             <tr>
                 <th>RID</th>
@@ -57,7 +57,7 @@
                     <td><a href="" class="req">{{REQUEST_ID}}</a></td>
                     <td>{{MESSAGE_ID}}</td>
                     <td>{{REQUEST_SERVICE_ID}}</td>
-                    <td>{{REQUEST_DTE}}</td>
+                    <td>{{formatDateTime REQUEST_DTE}}</td>
                     <td>{{BRAND_NME}}</td>
                     <td><a href="" class="appCode">{{APPLICATION_CDE}}</a></td>
                     <td>{{APPLICATION_NME}}</td>
@@ -82,19 +82,19 @@
                     <td>{{SERVICE_NME}}</td>
                     <td>{{SEVERITY_CDE}}</td>
                     <td>{{LOG_CDE}}</td>
-                    <td>{{LOG_TXT}}</td>
-                    <td><a href="" class="srcName">{{SOURCE_NAME}}</a></td>
-                    <td>{{PROVIDER}}</td>
+                    <td><div style="word-wrap: break-word;">{{LOG_TXT}}</div></td>
+                    <td><a href="" class="srcName">{{SOURCE_NME}}</a></td>
+                    <td>{{APPLICATION_NAME}}</td>
                     <td><div class="panel-group" id="log_mess_accord{{RowNum}}">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#log_mess_accord{{RowNum}}" href="#collapse_log{{RowNum}}">Request Message</a>
+                                    <a data-toggle="collapse" data-parent="#log_mess_accord{{RowNum}}" href="#collapse_log{{RowNum}}">Response Message</a>
                                 </h4>
                             </div>
                             <div id="collapse_log{{RowNum}}" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <p>{{MESSAGE_TEXT}}</p>
+                                    <pre>{{MESSAGE_TEXT}}</pre>
                                 </div>
                             </div>
                         </div>
