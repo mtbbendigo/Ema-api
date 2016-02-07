@@ -7,7 +7,8 @@ var sql = require("mssql");
 module.exports = {
     searchHubLogs: searchHubLogs,
     getEnvironments: getEnvironments,
-    getHubConsumers: getHubConsumers
+    getHubConsumers: getHubConsumers,
+    getSlogans: getSlogans
 };
 
 
@@ -87,6 +88,7 @@ function searchHubLogs(datasource, params, cb)
                         var errorMessage = "Fatal Error occured.\nNumber: " + no + "\nName: " + name + "\nCode: " + code + "\nMessage: " + message;
                         console.log(cb, errorMessage);
                         //TODO: create a callback with the error?
+                        cb(err, errorMessage);
                     }
                     else
                     {
@@ -124,7 +126,6 @@ function getEnvironments(datasource, callback)
                 }
                 else
                 {
-                    console.log(recordsets);
                     callback(null, recordsets[0]);
                 }
                 conn.close();
@@ -152,7 +153,38 @@ function getHubConsumers(datasource, callback)
                     var code = (err.code !== null) ? err.code:"";
                     var message = (err.message != null) ? err.message:"";
                     var errorMessage = "Fatal Error occured.\nNumber: " + no + "\nName: " + name + "\nCode: " + code + "\nMessage: " + message;
-                    console.log(callback, errorMessage);
+                    //console.log(callback, errorMessage);
+                    callback(err, errorMessage);
+                }
+                else
+                {
+                    callback(null, recordsets[0]);
+                }
+                conn.close();
+            });
+        }
+    });
+}
+
+function getSlogans(config, callback)
+{
+    var conn = new sql.Connection(datasource, function(err){
+        if(err !== null) {
+            console.log("Connection to database failed.")
+            return;
+        }
+        else {
+            var request = new sql.Request(conn);
+            request.execute("pGetSlogans", function(err, recordsets, returnValue) {
+                if(!err === null)
+                {
+                    var no = (err.number !== null) ? err.number:0;
+                    var name = (err.name !== null) ? err.name:"";
+                    var code = (err.code !== null) ? err.code:"";
+                    var message = (err.message != null) ? err.message:"";
+                    var errorMessage = "Fatal Error occured.\nNumber: " + no + "\nName: " + name + "\nCode: " + code + "\nMessage: " + message;
+                    //console.log(callback, errorMessage);
+                    callback(err, errorMessage);
                 }
                 else
                 {

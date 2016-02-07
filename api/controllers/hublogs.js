@@ -10,7 +10,7 @@ var datasource = require.main.require('./api/helpers/mssql-datasource.js');
 var mysqlds = require.main.require('./api/helpers/mysql-datasource.js');
 var EMA_DB = "EMA";
 
-var isSQLServer = false;
+var isSQLServer = true;
 
 module.exports = {
     getHublogs: getHublogs,
@@ -81,7 +81,7 @@ function getEnvironments(req, res)
             }
             else
             {
-                console.log(err);
+                //console.log(err);
                 res.json("An error occured getting Environments");
             }
         });

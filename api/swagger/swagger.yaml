@@ -154,6 +154,27 @@ paths:
           schema:
             #a pointer to a definition
             $ref: "#/definitions/GetHubApplicationsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/slogans":
+    x-swagger-router-controller: slogans
+    x-a127-apply: {}
+    get:
+      description: Returns a list of Slogans used by the HUB
+      # used as the method name of the controller
+      operationId: getSlogans
+      responses:
+        "200":
+          description: Success
+          schema:
+            #a pointer to a definition
+            $ref: "#/definitions/GetSlogansResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 # complex objects have schema definitions
 definitions:
   HubLogResponse:
@@ -233,4 +254,15 @@ definitions:
       - message
     properties:
       message:
+        type: string
+  GetSlogansResponse:
+    type: array
+    items:
+      $ref: "#/definitions/Slogan"
+  Slogan:
+    type: object
+    properties:
+      id:
+        type: integer
+      description:
         type: string
