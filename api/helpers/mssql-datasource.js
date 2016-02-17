@@ -98,7 +98,7 @@ function getEnvironments(datasource, callback)
     var conn = new sql.Connection(datasource);
     conn.connect().then(function(){
         var request = new sql.Request(conn);
-        request.execute("pGetAllEnvironments11").then(function(recordSet){
+        request.execute("pGetAllEnvironments").then(function(recordSet){
             conn.close();
             callback(null, recordSet[0]);
         }).catch(function(err){
