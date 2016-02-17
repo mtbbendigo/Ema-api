@@ -7,7 +7,8 @@ var mysql = require('mysql');
 module.exports = {
     searchHubLogs: searchHubLogs,
     getEnvironments: getEnvironments,
-    getHubConsumers: getHubConsumers
+    getHubConsumers: getHubConsumers,
+    getSlogans: getSlogans
 };
 
 var configg = {
@@ -129,3 +130,19 @@ function createPooledConnection()
     });
 }
 
+function getSlogans(config, callback)
+{
+    var conn = mysql.createConnection(config);
+    conn.connect();
+    conn.query("CALL pGetSlogans()", function(err, rows){
+        if(err)
+        {
+            callback(err, null);
+        }
+        else
+        {
+            return callback(null, rows[0]);
+        }
+    });
+    conn.end();
+}

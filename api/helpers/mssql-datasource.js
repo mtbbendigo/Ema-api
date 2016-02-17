@@ -3,11 +3,13 @@
  */
 'use strict';
 var sql = require("mssql");
+const DATA_ERROR = "Database error occurred";
 
 module.exports = {
     searchHubLogs: searchHubLogs,
     getEnvironments: getEnvironments,
-    getHubConsumers: getHubConsumers
+    getHubConsumers: getHubConsumers,
+    getSlogans: getSlogans
 };
 
 
@@ -51,100 +53,117 @@ function extractLogsParamsFromRequest(req, callback)
 function searchHubLogs(datasource, params, cb)
 {
     extractLogsParamsFromRequest(params, function(err, result){
-        var conn = new sql.Connection(datasource, function(err){
+        var conn = new sql.Connection(datasource);
+        conn.connect().then(function() {
+            var request = new sql.Request(conn);
+            request.input('startIndex', sql.Int, result.startIndex);
+            request.input('resultSizeLimit', sql.Int, result.rss);
+            request.input('requestId', sql.Int, result.reqeustId);
+            request.input('serviceId', sql.Int, result.serviceId);
+            request.input('sourceName', sql.VarChar(50), result.sourceName);
+            request.input('userId', sql.VarChar, result.userId);
+            request.input('severityCode', sql.VarChar, result.severityCode);
+            request.input('logCode', sql.VarChar, result.logCode);
+            request.input('requestDate', sql.DateTime, result.requestDate);
+            request.input('applications', sql.VarChar, result.applications);
+            request.input('requestMessage', sql.VarChar(100), result.requestMessage);
+            request.input('logMessage', sql.VarChar(100), result.logMessage);
+            request.input('errorsOnly', sql.Bit, result.errorsOnly);
+            request.input('includeOlbPing', sql.Bit, result.includeOlbPing);
 
-            if(err !== null)
-            {
-                console.log("Connection to database failed.")
-                return;
-            }
-            else
-            {
-                var request = new sql.Request(conn);
-                request.input('startIndex', sql.Int, result.startIndex);
-                request.input('resultSizeLimit', sql.Int, result.rss);
-                request.input('requestId', sql.Int, result.reqeustId);
-                request.input('serviceId', sql.Int, result.serviceId);
-                request.input('sourceName', sql.VarChar(50), result.sourceName);
-                request.input('userId', sql.VarChar, result.userId);
-                request.input('severityCode', sql.VarChar, result.severityCode);
-                request.input('logCode', sql.VarChar, result.logCode);
-                request.input('requestDate', sql.DateTime, result.requestDate);
-                request.input('applications', sql.VarChar, result.applications);
-                request.input('requestMessage', sql.VarChar(100), result.requestMessage);
-                request.input('logMessage', sql.VarChar(100), result.logMessage);
-                request.input('errorsOnly', sql.Bit, result.errorsOnly);
-                request.input('includeOlbPing', sql.Bit, result.includeOlbPing);
-
-                request.execute('pGetHubLogs', function(err, recordsets, returnValue) {
-
-                    if(!err === null)
-                    {
-                        var no = (err.number !== null) ? err.number:0;
-                        var name = (err.name !== null) ? err.name:"";
-                        var code = (err.code !== null) ? err.code:"";
-                        var message = (err.message != null) ? err.message:"";
-                        var errorMessage = "Fatal Error occured.\nNumber: " + no + "\nName: " + name + "\nCode: " + code + "\nMessage: " + message;
-                        console.log(cb, errorMessage);
-                        //TODO: create a callback with the error?
-                    }
-                    else
-                    {
-                        //The returned ResultSet contains two arrays, one containing the rows, the other the returned value.
-                        //Swagger will barf at the non-defined array, just return the array you need.
-                        cb(null, recordsets[0]);
-                    }
-                    conn.close();
-                });
-            }
+            request.execute('pGetHubLogs').then(function (recordSet) {
+                conn.close();
+                cb(null, recordSet[0]);
+            }).catch(function(err){
+                console.log(err);
+                var no = (err.number !== null) ? err.number:0;
+                var name = (err.name !== null) ? err.name:"";
+                var code = (err.code !== null) ? err.code:"";
+                var message = (err.message != null) ? err.message:"";
+                var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
+                console.log(errorMessage);
+                //TODO: create a callback with the error?
+                conn.close();
+                cb(err, DATA_ERROR);
+            });
+        }).catch(function(err){
+            console.log(err);
+            cb(err, null);
         });
     });
 }
 
 function getEnvironments(datasource, callback)
 {
-    var conn = new sql.Connection(datasource, function(err){
-        if(err)
-        {
+    var conn = new sql.Connection(datasource);
+    conn.connect().then(function(){
+        var request = new sql.Request(conn);
+        request.execute("pGetAllEnvironments").then(function(recordSet){
+            conn.close();
+            callback(null, recordSet[0]);
+        }).catch(function(err){
+            var no = (err.number !== null) ? err.number:0;
+            var name = (err.name !== null) ? err.name:"";
+            var code = (err.code !== null) ? err.code:"";
+            var message = (err.message != null) ? err.message:"";
+            var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
+            conn.close();
             console.log(err);
-            console.log("Connection to database failed.");
-        }
-        else
-        {
-            var request = new sql.Request(conn);
-            request.execute("pGetAllEnvironments", function(err, recordsets, returnValue){
-                if(!err === null)
-                {
-                    var no = (err.number !== null) ? err.number:0;
-                    var name = (err.name !== null) ? err.name:"";
-                    var code = (err.code !== null) ? err.code:"";
-                    var message = (err.message != null) ? err.message:"";
-                    var errorMessage = "Fatal Error occured.\nNumber: " + no + "\nName: " + name + "\nCode: " + code + "\nMessage: " + message;
-                    console.log(callback, errorMessage);
-                }
-                else
-                {
-                    console.log(recordsets);
-                    callback(null, recordsets[0]);
-                }
-                conn.close();
-            });
-        }
+            callback(err, DATA_ERROR);
+        });
+    }).catch(function(err){
+        console.log(err);
+        callback(err, null);
     });
 }
 
 function getHubConsumers(datasource, callback)
 {
+    var conn = new sql.Connection(datasource);
+    conn.connect().then(function(){
+        var request = new sql.Request(conn);
+        request.execute("pGetApplicationConsumers").then(function(recordSet){
+            conn.close();
+            callback(null, recordSet[0]);
+        }).catch(function(err){
+            console.log(err);
+            conn.close();
+            var no = (err.number !== null) ? err.number:0;
+            var name = (err.name !== null) ? err.name:"";
+            var code = (err.code !== null) ? err.code:"";
+            var message = (err.message !== null) ? err.message:"";
+            var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
+            callback(err, DATA_ERROR);
+        });
+    }).catch(function(err){
+        console.log(err);
+        callback(err, DATA_ERROR);
+    });
+}
+
+var errorMessage = function buildErrorMessage(err){
+    console.log('called');
+    message({
+        no: err.number,
+        name: err.name,
+        code: err.code,
+        msg: err.message,
+        errorMessage: "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + msg
+    });
+    return message;
+}
+
+//Currently Not Used and might not be either - 18/02/2016
+function getSlogans(config, callback)
+{
     var conn = new sql.Connection(datasource, function(err){
-        if(err !== null)
-        {
+        if(err !== null) {
             console.log("Connection to database failed.")
             return;
         }
-        else
-        {
+        else {
             var request = new sql.Request(conn);
-            request.execute("pGetApplicationConsumers", function(err, recordsets, returnValue){
+            request.execute("pGetSlogans", function(err, recordsets, returnValue) {
                 if(!err === null)
                 {
                     var no = (err.number !== null) ? err.number:0;
@@ -152,7 +171,8 @@ function getHubConsumers(datasource, callback)
                     var code = (err.code !== null) ? err.code:"";
                     var message = (err.message != null) ? err.message:"";
                     var errorMessage = "Fatal Error occured.\nNumber: " + no + "\nName: " + name + "\nCode: " + code + "\nMessage: " + message;
-                    console.log(callback, errorMessage);
+                    //console.log(callback, errorMessage);
+                    callback(err, errorMessage);
                 }
                 else
                 {
@@ -164,9 +184,5 @@ function getHubConsumers(datasource, callback)
     });
 }
 
-sql.on('error', function(err) {
-    // ... error handler
-    console.log(err);
-    connection.close();
-});
+
 

@@ -81,7 +81,7 @@ function getEnvironments(req, res)
             }
             else
             {
-                console.log(err);
+                //console.log(err);
                 res.json("An error occured getting Environments");
             }
         });
