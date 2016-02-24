@@ -22,13 +22,13 @@ function extractLogsParamsFromRequest(req, callback)
     var srcName = (req.swagger.params.sourceName.value) ? req.swagger.params.sourceName.value:null;
     var user = (req.swagger.params.userId.value) ? req.swagger.params.userId.value:null;
     var sev = (req.swagger.params.severity.value) ? req.swagger.params.severity.value:null;
-    var cde = (req.swagger.params.code.value) ? req.swagger.params.code.value:null;
+    var logCode = (req.swagger.params.logCode.value) ? req.swagger.params.logCode.value:null;
     var date = (req.swagger.params.latestDate.value) ? req.swagger.params.latestDate.value:null;
     var appss = (req.swagger.params.apps.value) ? req.swagger.params.apps.value:null;
     var reqMess = (req.swagger.params.requestMessage.value) ? req.swagger.params.requestMessage.value:null;
-    var log = (req.swagger.params.logMessage.value) ? req.swagger.params.logMessage.value:null;
+    var logMsg = (req.swagger.params.logMessage.value) ? req.swagger.params.logMessage.value:null;
     var errs = (req.swagger.params.errorsOnly.value) ? req.swagger.params.errorsOnly.value:null;
-    var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:null;
+    var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:1;
 
     var logsRequest = {
         startIndex: startPos,
@@ -38,11 +38,11 @@ function extractLogsParamsFromRequest(req, callback)
         sourceName: srcName,
         userId: user,
         severityCode: sev,
-        logCode: cde,
+        logCode: logCode,
         requestDate: date,
         applications: appss,
         requestMessage: reqMess,
-        logMessage: log,
+        logMessage: logMsg,
         errorsOnly: errs,
         includeOlbPing: ping
     }
