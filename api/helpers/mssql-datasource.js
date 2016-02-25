@@ -29,7 +29,10 @@ function extractLogsParamsFromRequest(req, callback)
     var logMsg = (req.swagger.params.logMessage.value) ? req.swagger.params.logMessage.value:null;
     var errs = (req.swagger.params.errorsOnly.value) ? req.swagger.params.errorsOnly.value:null;
     var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:1;
+    console.log(date);
+    date = date.replace(/T/g, '');
 
+    console.log(date);
     var logsRequest = {
         startIndex: startPos,
         rss: resultSetSize,
@@ -64,15 +67,16 @@ function searchHubLogs(datasource, params, cb)
             request.input('userId', sql.VarChar, result.userId);
             request.input('severityCode', sql.VarChar, result.severityCode);
             request.input('logCode', sql.VarChar, result.logCode);
-            request.input('requestDate', sql.DateTime, result.requestDate);
+            request.input('requestDate', sql.DateTime2, result.requestDate);
             request.input('applications', sql.VarChar, result.applications);
             request.input('requestMessage', sql.VarChar(100), result.requestMessage);
             request.input('logMessage', sql.VarChar(100), result.logMessage);
             request.input('errorsOnly', sql.Bit, result.errorsOnly);
             request.input('includeOlbPing', sql.Bit, result.includeOlbPing);
-
+            console.log('aa bb ccc');
             request.execute('pGetHubLogs').then(function (recordSet) {
                 conn.close();
+                console.log(JSON.stringify(recordSet[0]));
                 cb(null, recordSet[0]);
             }).catch(function(err){
                 console.log(err);
@@ -82,6 +86,7 @@ function searchHubLogs(datasource, params, cb)
                 var message = (err.message != null) ? err.message:"";
                 var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
                 console.log(errorMessage);
+                console.log(JSON.stringify(err));
                 //TODO: create a callback with the error?
                 conn.close();
                 cb(err, DATA_ERROR);
@@ -108,11 +113,11 @@ function getEnvironments(datasource, callback)
             var message = (err.message != null) ? err.message:"";
             var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
             conn.close();
-            console.log(err);
+            console.log("Blah " + err + " End Blah");
             callback(err, DATA_ERROR);
         });
     }).catch(function(err){
-        console.log(err);
+        console.log(JSON.stringify(err) + " End of Message");
         callback(err, null);
     });
 }
@@ -133,7 +138,7 @@ function getHubConsumers(datasource, callback)
             var code = (err.code !== null) ? err.code:"";
             var message = (err.message !== null) ? err.message:"";
             var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
-            callback(err, DATA_ERROR);
+            callback(json({message: errorMessage}), DATA_ERROR);
         });
     }).catch(function(err){
         console.log(err);

@@ -46,6 +46,7 @@ function getHublogs(req, res) {
             }
             else
             {
+                console.log(JSON.stringify(err));
                 res.json(err);
             }
         });
@@ -60,7 +61,8 @@ function getHublogs(req, res) {
             }
             else
             {
-                console.log(err);
+                console.log(JSON.stringify(err));
+                res.json(err);
             }
         });
     }
@@ -81,8 +83,9 @@ function getEnvironments(req, res)
             }
             else
             {
-                //console.log(err);
-                res.json("An error occured getting Environments");
+                console.log(JSON.stringify(err));
+                console.log(err.code);
+                res.json(err);
             }
         });
     }
@@ -96,7 +99,8 @@ function getEnvironments(req, res)
             }
             else
             {
-                console.log(err);
+                console.log(JSON.stringify(err));
+                res.json(err);
             }
         });
     }
@@ -123,6 +127,7 @@ function getApplications(req, res)
             }
             else
             {
+                console.log(JSON.stringify(err));
                 res.json(err);
             }
         });
@@ -137,7 +142,8 @@ function getApplications(req, res)
             }
             else
             {
-                console.log(err);
+                console.log(JSON.stringify(err));
+                res.json(err);
             }
         });
     }

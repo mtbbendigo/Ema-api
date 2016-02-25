@@ -76,10 +76,10 @@ paths:
           type: string
         - name: latestDate
           in: query
-          description: Date and Time as per format YYYY-MM-DD T hh:mi:ss
+          description: Date and Time as per format YYYY-MM-DD Thh:mi:ss.ss
           required: false
           type: string
-          #format: date-time
+          format: dateTime
         - name: requestMessage
           in: query
           description: Contents of Request Message
@@ -175,7 +175,7 @@ definitions:
         type: integer
       dateOfLog:
         type: string
-        #format: date-time
+        format: dateTime
       brand:
         type: string
       applicationCode:
@@ -233,8 +233,9 @@ definitions:
       description:
         type: string
   ErrorResponse:
+    type: object
     required:
       - message
     properties:
       message:
-        type: string
+        type: object
