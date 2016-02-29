@@ -79,7 +79,7 @@ paths:
           description: Date and Time as per format YYYY-MM-DD Thh:mi:ss.ss
           required: false
           type: string
-          format: dateTime
+          format: dateTime2
         - name: requestMessage
           in: query
           description: Contents of Request Message

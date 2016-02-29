@@ -15,7 +15,7 @@ module.exports = {
 /*
  * There seems to be an issue where javascript may assign an undefined value to an unpopulated parameter in the
  * request which breaks the stored procedure. Setting any undefined values to null ensures acceptable values are
-  * parsed.
+ * parsed.
  */
 function extractLogsParamsFromRequest(req, callback)
 {
@@ -31,8 +31,8 @@ function extractLogsParamsFromRequest(req, callback)
     var appss = (req.swagger.params.apps.value) ? req.swagger.params.apps.value:null;
     var reqMess = (req.swagger.params.requestMessage.value) ? req.swagger.params.requestMessage.value:null;
     var logMsg = (req.swagger.params.logMessage.value) ? req.swagger.params.logMessage.value:null;
-    var errs = (req.swagger.params.errorsOnly.value) ? req.swagger.params.errorsOnly.value:0;
-    var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:0;
+    var errs = (req.swagger.params.errorsOnly.value) ? req.swagger.params.errorsOnly.value:null;
+    var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:1;
 
     var logsRequest = {
         startIndex: startPos,
@@ -183,6 +183,5 @@ function getSlogans(config, callback)
         }
     });
 }
-
 
 
