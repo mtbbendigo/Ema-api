@@ -9,7 +9,8 @@ module.exports = {
     searchHubLogs: searchHubLogs,
     getEnvironments: getEnvironments,
     getHubConsumers: getHubConsumers,
-    getSlogans: getSlogans
+    getSlogans: getSlogans,
+    getServicePerformanceStats: getServicePerformanceStats
 };
 
 /*
@@ -126,6 +127,32 @@ function getHubConsumers(datasource, callback)
             conn.close();
             callback(null, recordSet[0]);
         }).catch(function(err){
+            console.log("Error1: " + err);
+            console.log(JSON.stringify(err));
+            conn.close();
+            var no = (err.number !== null) ? err.number:0;
+            var name = (err.name !== null) ? err.name:"";
+            var code = (err.code !== null) ? err.code:"";
+            var message = (err.message !== null) ? err.message:"";
+            var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
+            console.log(errorMessage);
+            callback(err.message);
+        });
+    }).catch(function(err){
+        console.log("Error2: " + err);
+        callback(err);
+    });
+}
+
+function getServicePerformanceStats(dataSource, requestId, callback){
+    var conn = new sql.Connection(dataSource);
+    conn.connect().then(function(){
+        var request = new sql.Request(conn);
+        request.input('requestId', sql.Int, requestId);
+        request.execute("pGetServicePerformanceStats").then(function(recordSet){
+            conn.close();
+            callback(null, recordSet[0]);
+        }).catch(function(err){
             console.log(err);
             conn.close();
             var no = (err.number !== null) ? err.number:0;
@@ -133,11 +160,11 @@ function getHubConsumers(datasource, callback)
             var code = (err.code !== null) ? err.code:"";
             var message = (err.message !== null) ? err.message:"";
             var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
-            callback(json({message: errorMessage}), DATA_ERROR);
+            callback(errorMessage);
         });
     }).catch(function(err){
         console.log(err);
-        callback(err, DATA_ERROR);
+        callback(err);
     });
 }
 

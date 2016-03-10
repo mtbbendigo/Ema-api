@@ -15,7 +15,8 @@ var isSQLServer = true;
 module.exports = {
     getHublogs: getHublogs,
     getEnvironments: getEnvironments,
-    getApplications: getApplications
+    getApplications: getApplications,
+    getServicePerformanceStats: getServicePerformanceStats
 };
 
 
@@ -148,4 +149,29 @@ function getApplications(req, res)
         });
     }
 
+}
+
+function getServicePerformanceStats(req, res){
+    var env = req.swagger.params.env.value;
+    if(!env)
+    {
+        env = "huba1";
+    }
+    var dbConfig = undefined;
+    var reqId = req.swagger.params.requestId.value;
+    //MSSQL Server
+    dbConfig = dsConfig.HUBDatabase;
+    var config = usHelper.findWhere(dbConfig, {name: env.toUpperCase()});
+    datasource.getServicePerformanceStats(config, reqId, function(err, result)
+    {
+        if(!err)
+        {
+            res.json(result);
+        }
+        else
+        {
+            //console.log(JSON.stringify(err));
+            res.json(err);
+        }
+    });
 }

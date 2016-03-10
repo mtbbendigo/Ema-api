@@ -158,6 +158,32 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  "/performance":
+    x-swagger-router-controller: hublogs
+    x-a127-apply: {}
+    get:
+      description: Returns the name of a service and its performance stats
+      operationId: getServicePerformanceStats
+      parameters:
+        - name: env
+          in: query
+          description: The environment the request is intended for i.e. Dev, SVT, UAT
+          required: true
+          type: string
+        - name: requestId
+          in: query
+          description: The requestId to search on
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/ServicePerformanceStatsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
 # complex objects have schema definitions
 definitions:
   HubLogResponse:
@@ -232,10 +258,32 @@ definitions:
         type: string
       description:
         type: string
+  ServicePerformanceStatsResponse:
+    required:
+      - performanceStats
+    properties:
+      performanceStats:
+        type: array
+        items:
+          $ref: "#/definitions/ServicePerformanceStat"
+  ServicePerformanceStat:
+    properties:
+      serviceId:
+        type: integer
+      requestDte:
+        type: string
+        #format: dateTime
+      serviceAvg:
+        type: integer
+      serviceCount:
+        type: integer
+      serviceName:
+        type: string
   ErrorResponse:
     type: object
     required:
       - message
     properties:
       message:
-        type: object
+        type: string
+
