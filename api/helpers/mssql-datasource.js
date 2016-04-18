@@ -33,7 +33,7 @@ function extractLogsParamsFromRequest(req, callback)
     var reqMess = (req.swagger.params.requestMessage.value) ? req.swagger.params.requestMessage.value:null;
     var logMsg = (req.swagger.params.logMessage.value) ? req.swagger.params.logMessage.value:null;
     var errs = (req.swagger.params.errorsOnly.value) ? req.swagger.params.errorsOnly.value:null;
-    var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:1;
+    var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:null;
 
     var logsRequest = {
         startIndex: startPos,
@@ -51,6 +51,7 @@ function extractLogsParamsFromRequest(req, callback)
         errorsOnly: errs,
         includeOlbPing: ping
     }
+    //console.log(JSON.stringify(logsRequest));
     callback(null, logsRequest);
 }
 
@@ -109,11 +110,9 @@ function getEnvironments(datasource, callback)
             var message = (err.message != null) ? err.message:"";
             var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
             conn.close();
-            console.log("Blah " + err + " End Blah");
             callback(err, DATA_ERROR);
         });
     }).catch(function(err){
-        console.log(JSON.stringify(err) + " End of Message");
         callback(err, null);
     });
 }
@@ -127,24 +126,21 @@ function getHubConsumers(datasource, callback)
             conn.close();
             callback(null, recordSet[0]);
         }).catch(function(err){
-            console.log("Error1: " + err);
-            console.log(JSON.stringify(err));
             conn.close();
             var no = (err.number !== null) ? err.number:0;
             var name = (err.name !== null) ? err.name:"";
             var code = (err.code !== null) ? err.code:"";
             var message = (err.message !== null) ? err.message:"";
             var errorMessage = "Fatal Error occured. Number: " + no + " Name: " + name + " Code: " + code + " Message: " + message;
-            console.log(errorMessage);
             callback(err.message);
         });
     }).catch(function(err){
-        console.log("Error2: " + err);
         callback(err);
     });
 }
 
 function getServicePerformanceStats(dataSource, requestId, callback){
+
     var conn = new sql.Connection(dataSource);
     conn.connect().then(function(){
         var request = new sql.Request(conn);
@@ -153,7 +149,6 @@ function getServicePerformanceStats(dataSource, requestId, callback){
             conn.close();
             callback(null, recordSet[0]);
         }).catch(function(err){
-            console.log(err);
             conn.close();
             var no = (err.number !== null) ? err.number:0;
             var name = (err.name !== null) ? err.name:"";
@@ -163,13 +158,11 @@ function getServicePerformanceStats(dataSource, requestId, callback){
             callback(errorMessage);
         });
     }).catch(function(err){
-        console.log(err);
         callback(err);
     });
 }
 
 var errorMessage = function buildErrorMessage(err){
-    console.log('called');
     message({
         no: err.number,
         name: err.name,
@@ -185,8 +178,7 @@ function getSlogans(config, callback)
 {
     var conn = new sql.Connection(datasource, function(err){
         if(err !== null) {
-            console.log("Connection to database failed.")
-            return;
+            callback(err, 'Connection to db failed');
         }
         else {
             var request = new sql.Request(conn);

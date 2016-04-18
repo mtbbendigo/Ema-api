@@ -26,13 +26,13 @@ module.exports = {
  Param 1: a handle to the request object
  Param 2: a handle to the response object
  */
-function getHublogs(req, res) {
+function getHublogs(req, res, next) {
     //variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 
     var env = req.swagger.params.env.value;
     if(!env)
     {
-        env = "huba1";
+        env = "hubld";
     }
     var dbConfig = undefined;
     if(isSQLServer) {
@@ -48,7 +48,7 @@ function getHublogs(req, res) {
             else
             {
                 //console.log(JSON.stringify(err));
-                res.json(err);
+                return next(err);
             }
         });
     }
@@ -113,7 +113,7 @@ function getApplications(req, res)
     var env = req.swagger.params.env.value;
     if(!env)
     {
-        env = "huba1";
+        env = "hubld";
     }
     var dbConfig = undefined;
     if(isSQLServer) {
@@ -155,7 +155,7 @@ function getServicePerformanceStats(req, res){
     var env = req.swagger.params.env.value;
     if(!env)
     {
-        env = "huba1";
+        env = "hubld";
     }
     var dbConfig = undefined;
     var reqId = req.swagger.params.requestId.value;

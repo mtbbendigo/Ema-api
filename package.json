@@ -24,14 +24,15 @@
     "volos-quota-redis": "",
     "volos-spikearrest-memory": "",
     "volos-oauth-redis": "",
-    "volos-oauth-apigee": ""
+    "volos-oauth-apigee": "",
+    "lodash": "3.10.x"
   },
   "devDependencies": {
     "should": "4.4.x",
     "supertest": "0.15.x"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node --harmony app.js"
   },
   "api": {
     "name": "Ema-api",
