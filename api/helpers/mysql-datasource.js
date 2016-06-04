@@ -41,11 +41,8 @@ function searchHubLogs(config, req, callback)
     var appss = isNotNullOrUndefined(req.swagger.params.apps.value) ? "'" + req.swagger.params.apps.value + "'":null;
     //console.log(appss.length);
     if((appss !== null && appss !== undefined) && appss.length > 5) {
-        console.log(appss);
-        console.log("split");
         var app = appss.split(",");
         appss = app[0] + "'";
-        console.log(appss);
     }
     var reqMess = isNotNullOrUndefined(req.swagger.params.requestMessage.value) ? "'" + req.swagger.params.requestMessage.value + "'":null;
     var log = isNotNullOrUndefined(req.swagger.params.logMessage.value) ? "'" + req.swagger.params.logMessage.value + "'":null;

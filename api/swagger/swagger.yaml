@@ -54,19 +54,19 @@ paths:
           description: The serviceId
           required: false
           type: string
-        - name: severity
-          in: query
-          description: Error severity i.e. E, I
-          required: false
-          type: string
         - name: sourceName
           in: query
           description: Source Name
           required: false
           type: string
-        - name: code
+        - name: severity
           in: query
-          description: Code
+          description: Error severity i.e. E, I
+          required: false
+          type: string
+        - name: logCode
+          in: query
+          description: Logcode
           required: false
           type: string
         - name: userId
@@ -76,10 +76,10 @@ paths:
           type: string
         - name: latestDate
           in: query
-          description: Date and Time as per format YYYY-MM-DD T hh:mi:ss
+          description: Date and Time as per format YYYY-MM-DD Thh:mi:ss.ss
           required: false
           type: string
-          #format: date-time
+          format: dateTime2
         - name: requestMessage
           in: query
           description: Contents of Request Message
@@ -158,19 +158,28 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/slogans":
-    x-swagger-router-controller: slogans
+  "/performance":
+    x-swagger-router-controller: hublogs
     x-a127-apply: {}
     get:
-      description: Returns a list of Slogans used by the HUB
-      # used as the method name of the controller
-      operationId: getSlogans
+      description: Returns the name of a service and its performance stats
+      operationId: getServicePerformanceStats
+      parameters:
+        - name: env
+          in: query
+          description: The environment the request is intended for i.e. Dev, SVT, UAT
+          required: true
+          type: string
+        - name: requestId
+          in: query
+          description: The requestId to search on
+          required: true
+          type: string
       responses:
         "200":
           description: Success
           schema:
-            #a pointer to a definition
-            $ref: "#/definitions/GetSlogansResponse"
+            $ref: "#/definitions/ServicePerformanceStatsResponse"
         default:
           description: Error
           schema:
@@ -192,7 +201,7 @@ definitions:
         type: integer
       dateOfLog:
         type: string
-        #format: date-time
+        format: dateTime
       brand:
         type: string
       applicationCode:
@@ -212,7 +221,7 @@ definitions:
       severity:
         type: string
       logCode:
-        type: integer
+        type: string
       logText:
         type: string
       sourceName:
@@ -249,20 +258,32 @@ definitions:
         type: string
       description:
         type: string
+  ServicePerformanceStatsResponse:
+    required:
+      - performanceStats
+    properties:
+      performanceStats:
+        type: array
+        items:
+          $ref: "#/definitions/ServicePerformanceStat"
+  ServicePerformanceStat:
+    properties:
+      serviceId:
+        type: integer
+      requestDte:
+        type: string
+        #format: dateTime
+      serviceAvg:
+        type: integer
+      serviceCount:
+        type: integer
+      serviceName:
+        type: string
   ErrorResponse:
+    type: object
     required:
       - message
     properties:
       message:
         type: string
-  GetSlogansResponse:
-    type: array
-    items:
-      $ref: "#/definitions/Slogan"
-  Slogan:
-    type: object
-    properties:
-      id:
-        type: integer
-      description:
-        type: string
+

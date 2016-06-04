@@ -10,12 +10,13 @@ var datasource = require.main.require('./api/helpers/mssql-datasource.js');
 var mysqlds = require.main.require('./api/helpers/mysql-datasource.js');
 var EMA_DB = "EMA";
 
-var isSQLServer = false;
+var isSQLServer = true;
 
 module.exports = {
     getHublogs: getHublogs,
     getEnvironments: getEnvironments,
-    getApplications: getApplications
+    getApplications: getApplications,
+    getServicePerformanceStats: getServicePerformanceStats
 };
 
 
@@ -25,13 +26,13 @@ module.exports = {
  Param 1: a handle to the request object
  Param 2: a handle to the response object
  */
-function getHublogs(req, res) {
+function getHublogs(req, res, next) {
     //variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
 
     var env = req.swagger.params.env.value;
     if(!env)
     {
-        env = "huba1";
+        env = "hubld";
     }
     var dbConfig = undefined;
     if(isSQLServer) {
@@ -46,7 +47,8 @@ function getHublogs(req, res) {
             }
             else
             {
-                res.json(err);
+                //console.log(JSON.stringify(err));
+                return next(err);
             }
         });
     }
@@ -60,7 +62,8 @@ function getHublogs(req, res) {
             }
             else
             {
-                console.log(err);
+                //console.log(JSON.stringify(err));
+                res.json(err);
             }
         });
     }
@@ -81,8 +84,9 @@ function getEnvironments(req, res)
             }
             else
             {
-                //console.log(err);
-                res.json("An error occured getting Environments");
+                //console.log(JSON.stringify(err));
+                //console.log(err.code);
+                res.json(err);
             }
         });
     }
@@ -96,7 +100,8 @@ function getEnvironments(req, res)
             }
             else
             {
-                console.log(err);
+                //console.log(JSON.stringify(err));
+                res.json(err);
             }
         });
     }
@@ -108,7 +113,7 @@ function getApplications(req, res)
     var env = req.swagger.params.env.value;
     if(!env)
     {
-        env = "huba1";
+        env = "hubld";
     }
     var dbConfig = undefined;
     if(isSQLServer) {
@@ -123,6 +128,7 @@ function getApplications(req, res)
             }
             else
             {
+                //console.log(JSON.stringify(err));
                 res.json(err);
             }
         });
@@ -137,9 +143,35 @@ function getApplications(req, res)
             }
             else
             {
-                console.log(err);
+                //console.log(JSON.stringify(err));
+                res.json(err);
             }
         });
     }
 
+}
+
+function getServicePerformanceStats(req, res){
+    var env = req.swagger.params.env.value;
+    if(!env)
+    {
+        env = "hubld";
+    }
+    var dbConfig = undefined;
+    var reqId = req.swagger.params.requestId.value;
+    //MSSQL Server
+    dbConfig = dsConfig.HUBDatabase;
+    var config = usHelper.findWhere(dbConfig, {name: env.toUpperCase()});
+    datasource.getServicePerformanceStats(config, reqId, function(err, result)
+    {
+        if(!err)
+        {
+            res.json(result);
+        }
+        else
+        {
+            //console.log(JSON.stringify(err));
+            res.json(err);
+        }
+    });
 }
