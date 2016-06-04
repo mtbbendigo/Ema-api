@@ -11,13 +11,13 @@ module.exports = {
     getSlogans: getSlogans
 };
 
-var configg = {
-    "name": "HUBA1",
-    "host": "localhost",
-    "user": "root",
-    "password": "Iluv2java2",
-    "database": "ema"
-}
+//var configg = {
+//    "name": "HUBA1",
+//    "host": "localhost",
+//    "user": "root",
+//    "password": "Iluv2java2",
+//    "database": "ema"
+//}
 
 //var s = searchHubLogs(configg, "", function(){});
 
@@ -53,66 +53,75 @@ function searchHubLogs(config, req, callback)
     var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:0;
 
     var connection = mysql.createConnection(config);
-    connection.connect();
-    var request = "CALL pGetHubLogs(" + startPos + ", " + resultSetSize + ", " + reqID + ", " +
-        srvID + ", " + srcName + ", " + user + ", " + sev + ", " + cde + ", " +
-        date + ", " + appss + ", " + reqMess + ", " + log +", " + errs + ", " +
-        ping + ")";
-    //console.log(request);
-    connection.query(request, function(err, rows, fields)
-
-    //pGetHubLogs`(in startIndex integer, resultSizeLimit integer,
-    //requestId integer, serviceId integer, sourceName varchar(50), userId varchar(30),
-    //severityCode varchar(30), logCode varchar(40), requestDate DATE, apps varchar(50),
-    //requestMessage varchar(50), logMessage varchar(50), errorsOnly bit, includeOlbPing bit)
-
-    {
-        if(err)
-        {
-            callback(err, null);
+    connection.connect(function(err){
+        if(err){
+            console.error('Error Connecting to database: ' + err.stack);
+            return;
         }
-        else
+        var request = "CALL pGetHubLogs(" + startPos + ", " + resultSetSize + ", " + reqID + ", " +
+            srvID + ", " + srcName + ", " + user + ", " + sev + ", " + cde + ", " +
+            date + ", " + appss + ", " + reqMess + ", " + log +", " + errs + ", " +
+            ping + ")";
+        connection.query(request, function(err, rows, fields)
+
         {
-            return callback(null, rows[0]);
-        }
+            if(err)
+            {
+                callback(err, null);
+            }
+            else
+            {
+                return callback(null, rows[0]);
+            }
+        });
+        connection.end();
     });
-    connection.end();
 }
 
 function getHubConsumers(config, callback)
 {
     var connection = mysql.createConnection(config);
-    connection.connect();
-    connection.query("CALL pGetApplicationConsumers()", function(err, rows, fields)
-    {
-        if(err)
-        {
-            callback(err, null);
+    connection.connect(function(err){
+        if(err){
+            console.error('Error Connecting to database: ' + err.stack);
+            return;
         }
-        else
+        connection.query("CALL pGetApplicationConsumers()", function(err, rows, fields)
         {
-            return callback(null, rows[0]);
-        }
+            if(err)
+            {
+                callback(err, null);
+            }
+            else
+            {
+                return callback(null, rows[0]);
+            }
+        });
+        connection.end();
     });
-    connection.end();
 }
 
 function getEnvironments(config, callback)
 {
     var connection = mysql.createConnection(config);
-    connection.connect();
-    connection.query("CALL pGetAllEnvironments()", function(err, rows, fields)
-    {
-        if(err)
-        {
-            callback(err, null);
+    connection.connect(function(err){
+        if(err){
+            console.error('Error Connecting to database: ' + err.stack);
+            return;
         }
-        else
+        connection.query("CALL pGetAllEnvironments()", function(err, rows, fields)
         {
-            return callback(null, rows[0]);
-        }
+            if(err)
+            {
+                callback(err, null);
+            }
+            else
+            {
+                return callback(null, rows[0]);
+            }
+        });
+        connection.end();
     });
-    connection.end();
 }
 
 function createPooledConnection()
