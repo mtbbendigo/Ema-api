@@ -20,20 +20,20 @@ module.exports = {
 function extractLogsParamsFromRequest(req, callback)
 {
     var startPos = (req.swagger.params.start.value) ? req.swagger.params.start.value:0;
-    var resultSetSize = (req.swagger.params.noRecords.value) ? req.swagger.params.noRecords.value:200;
+    var resultSetSize = (req.swagger.params.noRecords.value) ? req.swagger.params.noRecords.value:80;
     var reqID = (req.swagger.params.requestId.value) ? req.swagger.params.requestId.value:null;
     var srvID = (req.swagger.params.serviceId.value) ? req.swagger.params.serviceId.value:null;
     var srcName = (req.swagger.params.sourceName.value) ? req.swagger.params.sourceName.value:null;
     var user = (req.swagger.params.userId.value) ? req.swagger.params.userId.value:null;
     var sev = (req.swagger.params.severity.value) ? req.swagger.params.severity.value:null;
-    var logCode = (req.swagger.params.logCode.value) ? req.swagger.params.logCode.value:null;
+    var logCode = (req.swagger.params.logCode.value != 0) ? req.swagger.params.logCode.value:null;
     var date = (req.swagger.params.latestDate.value) ? req.swagger.params.latestDate.value:null;
     var appss = (req.swagger.params.apps.value) ? req.swagger.params.apps.value:null;
     var reqMess = (req.swagger.params.requestMessage.value) ? req.swagger.params.requestMessage.value:null;
     var logMsg = (req.swagger.params.logMessage.value) ? req.swagger.params.logMessage.value:null;
     var errs = (req.swagger.params.errorsOnly.value) ? req.swagger.params.errorsOnly.value:null;
     var ping = (req.swagger.params.includeOlbPing.value) ? req.swagger.params.includeOlbPing.value:null;
-
+    //console.log("Log Code: " + logCode);
     var logsRequest = {
         startIndex: startPos,
         rss: resultSetSize,
@@ -60,6 +60,7 @@ function searchHubLogs(datasource, params, cb)
     extractLogsParamsFromRequest(params, function(err, result){
         var conn = new sql.Connection(datasource);
         conn.connect().then(function() {
+            //console.log("Result: " + result.logCode);
             var request = new sql.Request(conn);
             request.input('startIndex', sql.Int, result.startIndex);
             request.input('resultSizeLimit', sql.Int, result.rss);
@@ -68,7 +69,7 @@ function searchHubLogs(datasource, params, cb)
             request.input('sourceName', sql.VarChar(50), result.sourceName);
             request.input('userId', sql.VarChar, result.userId);
             request.input('severityCode', sql.VarChar, result.severityCode);
-            request.input('logCode', sql.VarChar, result.logCode);
+            request.input('logCode', result.logCode);
             request.input('requestDate', result.requestDate);
             request.input('applications', sql.VarChar, result.applications);
             request.input('requestMessage', sql.VarChar(100), result.requestMessage);
@@ -76,6 +77,20 @@ function searchHubLogs(datasource, params, cb)
             request.input('errorsOnly', sql.Bit, result.errorsOnly);
             request.input('includeOlbPing', sql.Bit, result.includeOlbPing);
             request.execute('pGetHubLogs').then(function (recordSet) {
+     //@startIndex integer,
+	// @resultSizeLimit integer,
+	// @requestId integer,
+	// @serviceId integer,
+	// @sourceName varchar(50),
+	// @userId varchar(1),
+	// @severityCode char(1),
+	// @logCode integer,
+	// @requestDate datetime,
+	// @applications varchar(MAX),
+	// @requestMessage varchar(100),
+	// @logMessage varchar(100),
+	// @errorsOnly bit,
+	// @includeOlbPing bit
                 conn.close();
                 cb(null, recordSet[0]);
             }).catch(function(err){

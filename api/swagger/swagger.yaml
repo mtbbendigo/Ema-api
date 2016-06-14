@@ -68,7 +68,7 @@ paths:
           in: query
           description: Logcode
           required: false
-          type: string
+          type: integer
         - name: userId
           in: query
           description: User

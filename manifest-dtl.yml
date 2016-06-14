@@ -1,0 +1,11 @@
+applications:
+- disk_quota: 512M
+  host: ema-api-v2
+  name: ema-api-v2
+  path: .
+  domain: c.bbldtl.int
+  instances: 1
+  memory: 512M
+  stack: cflinuxfs2
+  env:
+    APPSWITCH: true
