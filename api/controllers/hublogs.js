@@ -10,7 +10,7 @@ var datasource = require.main.require('./api/helpers/mssql-datasource.js');
 var mysqlds = require.main.require('./api/helpers/mysql-datasource.js');
 var EMA_DB = "EMA";
 
-var isSQLServer = true;
+var isSQLServer = false;
 
 module.exports = {
     getHublogs: getHublogs,
