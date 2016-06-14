@@ -99,7 +99,7 @@ function getEnvironments(config, callback)
             console.error('Error Connecting to database: ' + err.stack);
             return;
         }
-        connection.query("CALL pGetAllEnvironments()", function(err, rows, fields)
+        connection.query("CALL pGetEnvironments()", function(err, rows, fields)
         {
             if(err)
             {
