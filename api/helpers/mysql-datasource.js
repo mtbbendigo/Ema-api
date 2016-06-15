@@ -92,14 +92,13 @@ function getHubConsumers(config, callback)
 
 function getEnvironments(config, callback)
 {
-    console.log("a2");
     var connection = mysql.createConnection(config);
     connection.connect(function(err){
         if(err){
             console.error('Error Connecting to database: ' + err.stack);
             return;
         }
-        connection.query("CALL pGetAllEnvironments()", function(err, rows, fields)
+        connection.query("CALL pGetEnvironments()", function(err, rows, fields)
         {
             if(err)
             {
