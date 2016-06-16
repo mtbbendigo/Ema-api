@@ -21,15 +21,15 @@ a127.init(function(config) {
       };
     } else {
       // Ensure that err.message is enumerable (It is not by default)
-      // err = {
-      //   message: String(err.message) // Coerce to string
-      // };
+
       Object.defineProperty(err, 'message', { enumerable: true });
     }
 
+    console.error(err);
+    res.status(500).json(err);
     // Return a JSON representation of #/definitions/ErrorResponse
-    res.set('Content-Type', 'application/json');
-    res.end(JSON.stringify(err));console.log(JSON.stringify(err));
+    // res.set('Content-Type', 'application/json');
+    // res.end(JSON.stringify(err));console.log(JSON.stringify(err));
   });
 
   var port = process.env.PORT || 10010;

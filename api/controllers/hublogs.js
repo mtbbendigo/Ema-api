@@ -10,6 +10,7 @@ var datasource = require.main.require('./api/helpers/mssql-datasource.js');
 var mysqlds = require.main.require('./api/helpers/mysql-datasource.js');
 var EMA_DB = "EMA";
 
+
 var isSQLServer = false;
 
 module.exports = {
@@ -29,10 +30,6 @@ module.exports = {
 function getHublogs(req, res, next) {
     //variables defined in the Swagger document can be referenced using req.swagger.params.{parameter_name}
     var env = req.swagger.params.env.value;
-    if(!env)
-    {
-        env = "hubld";
-    }
     var dbConfig = undefined;
     if(isSQLServer) {
         //MSSQL Server
@@ -42,12 +39,11 @@ function getHublogs(req, res, next) {
         {
             if(!err)
             {
-                res.json(result);
+                res.status(200).send(json(result));
             }
             else
             {
-                //console.log(JSON.stringify(err));
-                return next(err);
+                returnError(res, 500, err);
             }
         });
     }
@@ -62,14 +58,11 @@ function getHublogs(req, res, next) {
         mysqlds.searchHubLogs(config, req, function(err, result){
             if (!err)
             {
-                console.log("3.");
-                res.json(result);
+                res.status(200).send(json(result));
             }
             else
             {
-                //console.log(JSON.stringify(err));
-                console.log(err);
-                res.json(err);
+                returnError(res, 500, err);
             }
         });
     }
@@ -77,45 +70,57 @@ function getHublogs(req, res, next) {
 
 function getEnvironments(req, res)
 {
+    var id = req.swagger.params.id.value;
+    var errMsg = {message: "Parameter " + id + " does not match any environments"};
+    var invalidConfig = "Config could not be created";
     var dbConfig = undefined;
     if(isSQLServer) {
-        //SQL Server
         dbConfig = dsConfig.EMADatabase;
-        var config = usHelper.findWhere(dbConfig, {name: "EMA"});
-
-        datasource.getEnvironments(config, function(err, result){
-            if(!err)
-            {
-                res.json(result);
-            }
-            else
-            {
-                //console.log(JSON.stringify(err));
-                //console.log(err.code);
-                res.json(err);
-            }
-        });
     }
     else {
-        //MY SQL
-        var env = req.swagger.params.env.value;
         dbConfig = dsConfig.MYSQL;
-        if(!usHelper.contains(dbConfig, env)) {
-            env = "EMA_DEV";
+    }
+
+    // if(!usHelper.contains(dbConfig, id))
+    // {
+    //     returnError(res, 400, errMsg);//res.status(400).send(err);
+    //     return;
+    // }
+
+    if(isSQLServer){
+        var config = usHelper.findWhere(dbConfig, {name: id});
+        if(config){
+            datasource.getEnvironments(config, function(err, result){
+                if(!err)
+                {
+                    res.status(200).send(json(result));
+                }
+                else
+                {
+                    returnError(res, 500, err);
+                }
+            });
         }
-        var config = usHelper.findWhere(dbConfig, {name: env});
-        mysqlds.getEnvironments(config, function(err, result){
-            if (!err) {
-                res.json(result);
-            }
-            else
-            {
-                //console.log(JSON.stringify(err));
-                res.json(err);
-            }
-        });
-
-
+        else {
+            returnError(res, 500, invalidConfig);
+        }
+    }
+    else {
+        var config = usHelper.findWhere(dbConfig, {name: id});
+        if(config){
+            mysqlds.getEnvironments(config, function(err, result){
+                if (!err) {
+                    res.status(200).send(json(result));
+                }
+                else
+                {
+                    returnError(res, 500, err);
+                }
+            });
+        }
+        else {
+            returnError(res, 500, invalidConfig);
+        }
     }
 }
 
@@ -136,7 +141,7 @@ function getApplications(req, res)
         {
             if(!err)
             {
-                res.json(result);
+                res.status(200).send(json(result));
             }
             else
             {
@@ -154,7 +159,7 @@ function getApplications(req, res)
         var config = usHelper.findWhere(dbConfig, {name: env});
         mysqlds.getHubConsumers(config, function(err, result){
             if (!err) {
-                res.json(result);
+                res.status(200).send(json(result));
             }
             else
             {
@@ -181,7 +186,7 @@ function getServicePerformanceStats(req, res){
     {
         if(!err)
         {
-            res.json(result);
+            res.status(200).send(json(result));
         }
         else
         {
@@ -189,4 +194,9 @@ function getServicePerformanceStats(req, res){
             res.json(err);
         }
     });
+}
+
+function returnError(res, statusCode, error)
+{
+    res.status(statusCode).send(error);
 }

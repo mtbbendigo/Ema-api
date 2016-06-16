@@ -32,7 +32,7 @@ paths:
         - name: env
           in: query
           description: The hublogs environment i.e. Dev, SVT, UAT
-          required: false
+          required: true
           type: string
         - name: start
           in: query
@@ -125,7 +125,7 @@ paths:
       # used as the method name of the controller
       operationId: getEnvironments
       parameters:
-       - name: env
+       - name: id
          in: query
          description: The hublogs environment i.e. Dev, SVT, UAT
          required: true
@@ -286,7 +286,6 @@ definitions:
       serviceName:
         type: string
   ErrorResponse:
-    type: object
     required:
       - message
     properties:
