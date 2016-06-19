@@ -2,6 +2,7 @@
 
 var a127 = require('a127-magic');
 var express = require('express');
+var uns = require("underscore");
 var app = express();
 
 module.exports = app; // for testing
@@ -25,16 +26,28 @@ a127.init(function(config) {
       Object.defineProperty(err, 'message', { enumerable: true });
     }
 
-    console.error(err);
-    res.status(500).json(err);
-    // Return a JSON representation of #/definitions/ErrorResponse
-    // res.set('Content-Type', 'application/json');
-    // res.end(JSON.stringify(err));console.log(JSON.stringify(err));
+    var errorResponse = new Object();
+    var list = Object.keys(err);
+    for (var i=0; i < list.length; i++) {
+      if (list[i] === 'originalResponse') {
+        errorResponse = err.originalResponse;
+      }
+    }
+
+    if(errorResponse != null){
+      console.error(err);
+      res.status(500).json(errorResponse);
+    }
+    else {
+      console.error(err);
+      res.status(500).json(err);
+    }
+
   });
 
   var port = process.env.PORT || 10010;
   // begin listening for client requests
   app.listen(port);
 
-  console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
+  console.log('try this:\ncurl http://localhost:' + port + '/ema/env?id=d');
 });

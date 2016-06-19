@@ -106,6 +106,29 @@ function getEnvironments(config, callback)
             }
             else
             {
+                return callback(null, rows[0]);
+            }
+        });
+        connection.end();
+    });
+}
+
+function getServicePerformanceStats(config, requestId, callback)
+{
+    var connection = mysql.createConnection(config);
+    connection.connect(function(err){
+        if(err){
+            console.error('Error Connecting to database: ' + err.stack);
+            return;
+        }
+        connection.query("CALL pGetPerformanceStats()", function(err, rows, fields)
+        {
+            if(err)
+            {
+                callback(err, null);
+            }
+            else
+            {
                 console.log(rows[0]);
                 return callback(null, rows[0]);
             }
