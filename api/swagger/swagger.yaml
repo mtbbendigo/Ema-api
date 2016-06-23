@@ -124,12 +124,6 @@ paths:
       description: Return a list of Hub Environments
       # used as the method name of the controller
       operationId: getEnvironments
-      parameters:
-       - name: id
-         in: query
-         description: The hublogs environment i.e. Dev, SVT, UAT
-         required: true
-         type: string
       responses:
         "200":
           description: Success

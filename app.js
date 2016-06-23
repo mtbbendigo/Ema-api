@@ -49,5 +49,5 @@ a127.init(function(config) {
   // begin listening for client requests
   app.listen(port);
 
-  console.log('try this:\ncurl http://localhost:' + port + '/ema/env?id=d');
+  console.log('try this:\ncurl http://localhost:' + port + '/ema/env');
 });

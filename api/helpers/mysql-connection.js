@@ -14,7 +14,7 @@ module.exports = {
 var s = getEnvironments();
 
 //var connection = mysql.createConnection({
-//    host     : 'localhost',
+//    region     : 'localhost',
 //    user     : 'roo',
 //    password : 'Iluv2java2',
 //    database : 'ema'
@@ -22,7 +22,7 @@ var s = getEnvironments();
 
 //var pool      =    mysql.createPool({
 //    connectionLimit : 100, //important
-//    host     : 'localhost',
+//    region     : 'localhost',
 //    user     : 'root',
 //    password : 'Iluv2java2',
 //    database : 'ema',
