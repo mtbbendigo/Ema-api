@@ -20,7 +20,7 @@ produces:
 x-a127-config: {}
 x-a127-services: {}
 paths:
-  "/hublog":
+  "/hublogs":
     # binds a127 app logic to a route
     x-swagger-router-controller: hublogs
     x-a127-apply: {}
@@ -117,7 +117,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/env":
+  "/hublogs/env":
     x-swagger-router-controller: hublogs
     x-a127-apply: {}
     get:
@@ -135,7 +135,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/apps":
+  "/hublogs/apps":
     x-swagger-router-controller: hublogs
     x-a127-apply: {}
     get:
@@ -158,7 +158,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/performance":
+  "/hublogs/performance":
     x-swagger-router-controller: hublogs
     x-a127-apply: {}
     get:
