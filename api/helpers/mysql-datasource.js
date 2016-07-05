@@ -67,12 +67,14 @@ function searchHubLogs(config, req, callback)
 
 function getHubConsumers(config, callback)
 {
-    console.log("b");
-    var connection = mysql.createConnection(config);
+    console.log("abcde");
+     var connection = mysql.createConnection(config);
     connection.connect(function(err){
         if(err){
             console.error('Error Connecting to database: ' + err.stack);
-            return;
+            connection.end(function(err){
+                return;
+            });
         }
         connection.query("CALL pGetApplicationConsumers()", function(err, rows, fields)
         {
