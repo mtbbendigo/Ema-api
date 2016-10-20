@@ -1,11 +1,15 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
+  version: "1.0.1"
   title: Environment Management Application
+  description: An Api for HUB Environment Management Services
+  contact:
+    name: ICC Integration Competency Centre
+    email: ChangeResourcesIntegrationCompetencyCentreAll@bendigoadelaide.com.au
 # during dev, should point to your local machine
 host: localhost:10010
 # basePath prefixes all resource paths
-basePath: /ema
+basePath: /
 #
 schemes:
   # tip: remove http to make production-grade
@@ -20,9 +24,9 @@ produces:
 x-a127-config: {}
 x-a127-services: {}
 paths:
-  "/hublogs":
+  "/hublogs/{env}":
     # binds a127 app logic to a route
-    x-swagger-router-controller: hublogs
+    x-swagger-router-controller: HubLogsController
     x-a127-apply: {}
     get:
       description: Returns Hublogs to the caller
@@ -30,7 +34,7 @@ paths:
       operationId: getHublogs
       parameters:
         - name: env
-          in: query
+          in: path
           description: The hublogs environment i.e. Dev, SVT, UAT
           required: true
           type: string
@@ -48,12 +52,12 @@ paths:
           in: query
           description: The requestId
           required: false
-          type: string
+          type: integer
         - name: serviceId
           in: query
           description: The serviceId
           required: false
-          type: string
+          type: integer
         - name: sourceName
           in: query
           description: Source Name
@@ -74,12 +78,18 @@ paths:
           description: User
           required: false
           type: string
+        - name: earliestDate
+          in: query
+          description: Earliest Date, format YYYY-MM-DD Thh:mi:ss.ss
+          required: false
+          type: string
+          format: date-time
         - name: latestDate
           in: query
           description: Date and Time as per format YYYY-MM-DD Thh:mi:ss.ss
           required: false
           type: string
-          format: dateTime2
+          format: date-time
         - name: requestMessage
           in: query
           description: Contents of Request Message
@@ -117,11 +127,11 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/hublogs/env":
-    x-swagger-router-controller: hublogs
+  "/environments":
+    x-swagger-router-controller: EnvironmentController
     x-a127-apply: {}
     get:
-      description: Return a list of Hub Environments
+      description: Return a list of Environments
       # used as the method name of the controller
       operationId: getEnvironments
       responses:
@@ -129,24 +139,122 @@ paths:
           description: Success
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/GetEnvironmentsResponse"
+            $ref: "#/definitions/GetEnvironmentResponse"
         # responses may fall through to errors
         default:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/hublogs/apps":
-    x-swagger-router-controller: hublogs
+  "/environment":
+    x-swagger-router-controller: EnvironmentController
     x-a127-apply: {}
     get:
-      description: Returns a list of Applications used by the HUB
+      description: Gets performance data for a particular service
+      operationId: getEnvironmentById
+      parameters:
+        - name: nme
+          in: query
+          description: A Hub Environment identifier
+          type: string
+          required: false
+        - name: id
+          in: query
+          description: Uniquely identifies an Environment
+          type: integer
+          required: false
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Environment"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: Add Environment
+      operationId: putEnvironment
+      parameters:
+        - name: nme
+          in: query
+          description: Name of this environment
+          required: true
+          type: string
+        - name: desc
+          in: query
+          type: string
+          required: false
+        - name: configTypeId
+          in: query
+          description: The Configuration type this environment uses.
+          required: true
+          type: integer
+        - name: svr
+          in: query
+          description: The Name of the Database Server
+          type: string
+          required: false
+        - name: database
+          in: query
+          description: The name of the Database
+          type: string
+          required: false
+        - name: uName
+          in: query
+          description: Username
+          type: string
+          required: false
+        - name: pwd
+          in: query
+          description: Password
+          type: string
+          required: false
+        - name: datasource
+          in: query
+          description: Datasource
+          type: string
+          required: false  
+        - name: perfHrs
+          in: query
+          description: Performance hours
+          type: integer
+          required: false
+        - name: configId
+          in: query
+          description: Configuration Type
+          type: integer
+          required: true
+        - name: url
+          in: query
+          description: Url
+          required: true
+          type: string
+        - name: adminUrl
+          in: query
+          description: Admin page url
+          required: true
+          type: string  
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetEnvironmentResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/environments/{env}/applications":
+    x-swagger-router-controller: ApplicationsController
+    x-a127-apply: {}
+    get:
+      description: Returns a list of Applications for the given Environment
       # used as the method name of the controller
       operationId: getApplications
       parameters:
         - name: env
-          in: query
+          in: path
           description: The hublogs environment i.e. Dev, SVT, UAT
-          required: false
+          required: true
           type: string
       responses:
         "200":
@@ -158,15 +266,15 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  "/hublogs/performance":
-    x-swagger-router-controller: hublogs
+  "/hublogs/{env}/service-performance":
+    x-swagger-router-controller: HubLogsController
     x-a127-apply: {}
     get:
       description: Returns the name of a service and its performance stats
       operationId: getServicePerformanceStats
       parameters:
         - name: env
-          in: query
+          in: path
           description: The environment the request is intended for i.e. Dev, SVT, UAT
           required: true
           type: string
@@ -179,7 +287,349 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/ServicePerformanceStatsResponse"
+            $ref: "#/definitions/ServicePerformanceResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  #Consumers are a child of environment
+  "/environment/{env}/consumers":
+    x-swagger-router-controller: ConsumerController
+    x-a127-apply: {}
+    get:
+      description: Gets performance data for a particular service
+      operationId: getConsumers
+      parameters:
+        - name: env
+          in: path
+          description: A Hub Environment identifier
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumersResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/environments/{env}/consumer/{consumerId}":
+    x-swagger-router-controller: ConsumerController
+    x-a127-apply: {}
+    get:
+      description: Get Conumser by id
+      operationId: getConsumer
+      parameters:
+        - name: env
+          in: path
+          description: Hub Region
+          type: string
+          required: true
+        - name: consumerId
+          in: path
+          description: ConsumerId
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumerResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Delete a Consumer by Id
+      operationId: deleteConsumer
+      parameters:
+        - name: env
+          in: path
+          description: Hub Region
+          type: string
+          required: true
+        - name: consumerId
+          in: path
+          description: ConsumerId to delete
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumerResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: Add a Consumer
+      operationId: addConsumer
+      parameters:
+        - name: env
+          in: path
+          required: true
+          type: string
+        - name: consumerId
+          in: path
+          required: true
+          type: string
+        - name: brandCde
+          in: query
+          description: brand
+          required: true
+          type: string
+        - name: appCde
+          in: query
+          description: Application Code
+          required: true
+          type: string
+        - name: instanceCde
+          in: query
+          description: Instance Code
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumersResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"        
+  "/environments/{env}/consumer-properties":
+    x-swagger-router-controller: ConsumerPropertyController
+    x-a127-apply: {}
+    get:
+      description: Gets performance data for a particular service
+      operationId: getPropertiesByConsumer
+      parameters:
+        - name: env
+          in: path
+          description: A Hub Environment identifier.
+          required: true
+          type: string
+        - name: brandCde
+          in: query
+          description: The brand
+          required: true
+          type: string
+        - name: appCde
+          in: query
+          description: The Appliction
+          required: true
+          type: string
+        - name: instanceCde
+          in: query
+          description: The instance e.g D, U
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumerPropertiesResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/environments/{env}/consumer/property/{propertyId}":
+    x-swagger-router-controller: ConsumerPropertyController
+    x-a127-apply: {}
+    get:
+      description: Get a Consumer Property
+      operationId: getConsumerProperty
+      parameters:
+        - name: env
+          in: path
+          description: A Hub Environment identifier.
+          required: true
+          type: string
+        - name: propertyId
+          in: path
+          description: Unique identifier
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumerPropertyResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    put:
+      description: Insert a Consumer Property
+      operationId: putConsumerProperty
+      parameters:
+        - name: env
+          in: path
+          description: Insert a Consumer Property
+          type: string
+          required: true
+        - name: propertyId
+          in: path
+          description: Uniquly identifies a ConsumerProperty
+          type: string
+          required: true
+        - name: propName
+          in: query
+          description: ConsumerProperty key
+          type: string
+          required: true
+        - name: propValue
+          in: query
+          description: The Consumer Property value
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumerPropertyResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: Delete a Consumer Property
+      operationId: deleteConsumerProperty
+      parameters:
+        - name: env
+          in: path
+          description: Insert a Consumer Property
+          type: string
+          required: true
+        - name: propertyId
+          in: path
+          description: Uniquly identifies a ConsumerProperty
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConsumerPropertyResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/environmenttypes":
+    x-swagger-router-controller: EnvironmentTypesController
+    x-a127-apply: {}
+    get:
+      description: Return a list of Environment Types
+      operationId: getEnvironmentTypes
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetEnvironmentTypesResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/environmenttypes/{id}":
+    x-swagger-router-controller: EnvironmentTypesController
+    x-a127-apply: {}
+    get:
+      description: Return an Environment Type by its Id
+      operationId: getEnvironmentTypeById
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: Uniquely identifies an EnvironmentType
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetEnvironmentTypeResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/configurationType":
+    x-swagger-router-controller: ConfigurationTypeController
+    x-a127-apply: {}
+    get:
+      description: Returns a list of Configurations
+      operationId: getConfigurationTypes
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConfigurationTypesResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/configurations":
+    x-swagger-router-controller: ConfigurationController
+    x-a127-apply: {}
+    get:
+      description: Returns a list of Configurations
+      operationId: getConfigurations
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConfigurationsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/configurations/{id}":
+    x-swagger-router-controller: ConfigurationsController
+    x-a127-apply: {}
+    get:
+      description: Returns a Configuration by its unique id
+      operationId: getConfigurationById
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: Uniquely identifies this Configuration
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetConfigurationResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/envconfigurations":
+    x-swagger-router-controller: EnvironmentConfigurationsController
+    x-a127-apply: {}
+    get:
+      description: Returns a list of Environment Configurations
+      operationId: getEnvironmentConfigurations
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetEnvironmentConfigurationsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  "/test":
+    x-swagger-router-controller: EnvironmentController
+    x-a127-apply: {}
+    get:
+      description: Return a list of Environment Types
+      operationId: insertTest
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Environment"
         default:
           description: Error
           schema:
@@ -193,6 +643,8 @@ definitions:
   HubLog:
     type: object
     properties:
+      rowNumber:
+        type: integer
       requestId:
         type: integer
       messageId:
@@ -232,18 +684,24 @@ definitions:
         type: string #dbo.MESSAGE.MESSAGE_TXT
       thunderheadRequestContent:
         type: string
-  GetEnvironmentsResponse:
+  GetEnvironmentResponse:
     type: array
     items:
       $ref: "#/definitions/Environment"
   Environment:
     type: object
     properties:
-      id:
+      ENVIRONMENT_ID:
         type: integer
-      name:
+      ENVIRONMENT_NME:
         type: string
-      description:
+      ENVIRONMENT_DESCR:
+        type: string
+      CONFIGURATION_TYPE_ID:
+        type: integer
+      URL:
+        type: string
+      ADMIN_PAGE_URL:
         type: string
   GetHubApplicationsResponse:
     type: array
@@ -258,15 +716,15 @@ definitions:
         type: string
       description:
         type: string
-  ServicePerformanceStatsResponse:
+  ServicePerformanceResponse:
     required:
-      - performanceStats
+      - servicePerformanceArray
     properties:
-      performanceStats:
+      servicePerformanceArray:
         type: array
         items:
-          $ref: "#/definitions/ServicePerformanceStat"
-  ServicePerformanceStat:
+          $ref: "#/definitions/ServicePerformance"
+  ServicePerformance:
     properties:
       serviceId:
         type: integer
@@ -279,10 +737,156 @@ definitions:
         type: integer
       serviceName:
         type: string
+  GetConsumerResponse:
+    type: object
+    properties:
+      brandCde:
+        type: string
+      appCde:
+        type: string
+      instanceCde:
+        type: string
+  GetConsumersResponse:
+    properties:
+      Consumers:
+        type: array
+        items:
+          $ref: "#/definitions/Consumer"
+  Consumer:
+    properties:
+      brandCde:
+        type: string
+      appCde:
+        type: string
+      instanceCde:
+        type: string
+  GetConsumerPropertyResponse:
+    type: object
+    properties:
+      brandCde:
+        type: string
+      appCde:
+        type: string
+      instanceCde:
+        type: string
+  GetConsumerPropertiesResponse:
+    properties:
+      ConsumerProperties:
+        type: array
+        items:
+          $ref: "#/definitions/ConsumerProperty"
+  ConsumerProperty:
+    properties:
+      consumerPropertyId:
+        type: integer
+      brandCde:
+        type: string
+      appCde:
+        type: string
+      instanceCde:
+        type: string
+      propertyName:
+        type: string
+      propertyValue:
+        type: string
+      consumerId:
+        type: integer
+  GetEnvironmentTypesResponse:
+    properties:
+      EnvironmentTypes:
+        type: array
+        items:
+          $ref: "#/definitions/EnvironmentType"
+  EnvironmentType:
+    properties:
+      ENVIRONMENT_TYPE_ID:
+        type: integer
+      TYPE_NME:
+        type: string
+  GetEnvironmentTypeResponse:
+    type: object
+    properties:
+      ENVIRONMENT_TYPE_ID:
+        type: integer
+      TYPE_NME:
+        type: string
+  GetConfigurationsResponse:
+    properties:
+      Configurations:
+        type: array
+        items:
+          $ref: "#/definitions/Configuration"
+  Configuration:
+    properties:
+      CONFIGURATION_ID:
+        type: integer
+      CONFIGURATION_NME:
+        type: string
+      DATABASE_SERVER:
+        type: string
+      DATABSE:
+        type: string
+      USERNAME:
+        type: string
+      PASSWD:
+        type: string
+      DATASOURCE:
+        type: string
+      PREF_HOURS:
+        type: integer
+  GetConfigurationResponse:
+    type: object
+    properties:
+      CONFIGURATION_ID:
+        type: integer
+      CONFIGURATION_NME:
+        type: string
+      DATABASE_SERVER:
+        type: string
+      DATABSE:
+        type: string
+      USERNAME:
+        type: string
+      PASSWD:
+        type: string
+      DATASOURCE:
+        type: string
+      PREF_HOURS:
+        type: integer
+  GetConfigurationTypesResponse:
+    properties:
+      ConfigurationTypes:
+        type: array
+        items:
+          $ref: "#/definitions/ConfigurationType"
+  ConfigurationType:
+    type: object
+    properties:
+      CONFIGURATION_TYPE_ID:
+        type: integer
+      TYPE_NME:
+        type: string
+  GetEnvironmentConfigurationsResponse:
+    properties:
+      EnvironmentConfigurations:
+        type: array
+        items:
+          $ref: "#/definitions/EnvironmentConfiguration"
+  EnvironmentConfiguration:
+    type: object
+    properties:
+      ENVIRONMENT_ID:
+        type: integer
+      CONFIGURATION_ID:
+        type: integer
+#  TestResponse:
+#    type: object
+#    properties:
+#      id:
+#        type: integer
   ErrorResponse:
     required:
       - message
     properties:
       message:
         type: string
-
