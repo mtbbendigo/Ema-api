@@ -11,6 +11,23 @@ module.exports = {
     getServicePerformanceStats: getServicePerformanceStats
 };
 
+function getHublogs(req, res, next) {
+//Change config to numeric
+    if(Number(useStubs) === 0){
+        let start = req.swagger.params.start.value ? req.swagger.params.start.value : 0;
+        let numRows = req.swagger.params.noRecords.value ? req.swagger.params.noRecords.value : 20;
+        let index = start + numRows;
+        let response = stub.slice(start, index);
+        let logs = [];
+        uns.each(response, function(row){
+            logs.push(extractHubLogFromRow(row));
+        });
+        res.json(logs);
+    }
+}
+
+
+
 var uns = require("underscore");
 var util = require('util');
 var region = process.env.Region; //Server defined
